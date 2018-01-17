@@ -1,0 +1,18 @@
+//
+// Created by zh on 2018/1/18.
+//
+
+#ifndef ZXJSON_ZXJSONC_H
+#define ZXJSON_ZXJSONC_H
+
+#endif //ZXJSON_ZXJSONC_H
+
+enum ZxType {
+    ZXTYPE_NULL,
+    ZXTYPE_FALSE,
+    ZXTYPE_TRUE,
+    ZXTYPE_NUMBER,
+    ZXTYPE_STRING,
+    ZXTYPE_ARRAY,
+    ZXTYPE_OBJECT
+};

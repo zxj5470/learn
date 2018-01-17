@@ -1,0 +1,9 @@
+# CLion
+cmake-build-debug/
+
+# idea
+build/
+.idea/
+
+# VS Code
+.DS_Store
