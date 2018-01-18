@@ -1,5 +1,6 @@
 #include "Zxjson.h"
-
+#include <iostream>
+using namespace std;
 int main() {
 
 //    cpp:
@@ -9,5 +10,6 @@ int main() {
 //    C:
 //
 //
+    cout << "23333"<< endl;
     return 0;
 }
