@@ -8,6 +8,7 @@ build/
 # VS Code
 .DS_Store
 
+<<<<<<< HEAD
 # PyCharm
 venv/
 
@@ -17,3 +18,8 @@ gradle/
 # Android
 .gradle/
 gradle/
+=======
+# Android
+.gradle/
+gradle/
+>>>>>>> bcb7719d93c5b18edf1898dc49608c556a7eacd4
