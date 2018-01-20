@@ -1,4 +1,4 @@
-#!../../../../venv/bin/python
+#!/usr/bin/env python3
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -16,7 +16,7 @@ plt.ylabel("I am y")
 
 new_ticks = np.linspace(-1, 2, 5)
 plt.xticks(new_ticks)
-plt.yticks([-2, 1.22], ['$That\'s\ good$', r'$\alpha$'])
+plt.yticks([-2, 1.22], [r'$That\'s\ good$', r'$\alpha$'])
 
 # gca = 'get current axis'
 # 设置坐标轴位置
@@ -29,7 +29,8 @@ ax.spines['bottom'].set_position(('data', -1))
 ax.spines['left'].set_position(('data', 0))
 
 # 图像返回值
-line1, = plt.plot(x, y1, label='down', color='red', linewidth=1.0, linestyle='--')  # 虚线为`--`
+line1, = plt.plot(x, y1, label='down', color='red',
+                  linewidth=1.0, linestyle='--')  # 虚线为`--`
 line2, = plt.plot(x, y2, label='up')
 
 # 图例部分

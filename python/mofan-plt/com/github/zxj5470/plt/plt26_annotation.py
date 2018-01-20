@@ -1,4 +1,4 @@
-#!../../../../venv/bin/python
+#!/usr/bin/env python3
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -23,7 +23,7 @@ x0 = 1
 y0 = 0.1 * x0 + 1
 
 # scatter 展示单个点
-plt.plot(x, y, linewidth=10,zorder=1)
+plt.plot(x, y, linewidth=10, zorder=1)
 plt.scatter(x0, y0, s=50, color='g')
 plt.plot([x0, x0], [y0, 0], 'k--', lw=2.5)  # k 为黑色
 
