@@ -5,36 +5,24 @@
 #ifndef ZXJSON_ZXJSONC_H
 #define ZXJSON_ZXJSONC_H
 
-#ifndef ISDIGIT_DEFINE
-#define ISDIGIT_DEFINE
-#define ISDIGIT(ch)         ((ch) >= '0' && (ch) <= '9')
-#define ISDIGIT1TO9(ch)     ((ch) >= '1' && (ch) <= '9')
-#endif
+typedef enum { LEPT_NULL, LEPT_FALSE, LEPT_TRUE, LEPT_NUMBER, LEPT_STRING, LEPT_ARRAY, LEPT_OBJECT } lept_type;
 
-enum ZxType {
-    ZXTYPE_NULL,
-    ZXTYPE_TRUE,
-    ZXTYPE_FALSE,
-    ZXTYPE_NUMBER,
-    ZXTYPE_STRING,
-    ZXTYPE_ARRAY,
-    ZXTYPE_OBJECT
+typedef struct {
+    double n;
+    lept_type type;
+}lept_value;
+
+enum {
+    LEPT_PARSE_OK = 0,
+    LEPT_PARSE_EXPECT_VALUE,
+    LEPT_PARSE_INVALID_VALUE,
+    LEPT_PARSE_ROOT_NOT_SINGULAR,
+    LEPT_PARSE_NUMBER_TOO_BIG
 };
 
-enum ZxSymbols {
-    ZX_Colon = ':',//Ã°ºÅ
-    ZX_Quote = '"',//ÒýºÅ
-    ZX_LSquareBracket = '[',    //·½À¨ºÅ£¬»¨À¨ºÅ
-    ZX_RSquareBracket = ']',
-    ZX_LBracket = '{',
-    ZX_RBracket = '}',
-    ZX_Slash = '\\',
-};
+int lept_parse(lept_value* v, const char* json);
 
-enum ZxStatus{
-    ZX_PARSE_OK,
-    ZX_PARSE_EXPECT_VALUE,
-    ZX_PARSE_INVALID_VALUE,
-    ZX_PARSE_ROOT_NOT_SINGULAR,
-};
+lept_type lept_get_type(const lept_value* v);
+
+double lept_get_number(const lept_value* v);
 #endif //ZXJSON_ZXJSONC_H
