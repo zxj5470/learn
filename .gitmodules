@@ -1,0 +1,3 @@
+[submodule "cpp/pystr/pystring"]
+	path = cpp/pystr/pystring
+	url = git@github.com:imageworks/pystring.git

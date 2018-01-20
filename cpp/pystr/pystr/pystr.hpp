@@ -1,7 +1,7 @@
 #ifndef INCLUDED_PYSTR_H
 #define INCLUDED_PYSTR_H
 #include <iostream>
-#include "pystring.h"
+#include "../pystring/pystring.h"
 
 using std::string;
 using std::ostream;
