@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">schooldan</string>
+    <string name="title_home">主界面</string>
+    <string name="title_dashboard">功能</string>
+    <string name="title_notifications">更多</string>
+</resources>
