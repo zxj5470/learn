@@ -1,12 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
 from matplotlib import animation
 
 fig, ax = plt.subplots()
-
+ax: Axes = ax # specify type [for code completion in PyCharm]
 x = np.arange(0, 2 * np.pi, 0.01)
 line, = ax.plot(x, np.sin(x))
-
 speed = 30
 
 
