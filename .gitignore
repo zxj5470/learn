@@ -4,6 +4,10 @@ cmake-build-debug/
 # idea
 build/
 .idea/
+out/
+
+# idea scala
+target/ 
 
 # VS Code
 .DS_Store
@@ -13,7 +17,6 @@ venv/
 
 # Android
 .gradle/
-gradle/
 
 # Visual Studio
 .vs/
