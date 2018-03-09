@@ -10,6 +10,7 @@ build/
 
 # PyCharm
 venv/
+RoadToMachineLearning/
 
 # Android
 .gradle/
@@ -19,3 +20,10 @@ gradle/
 .vs/
 Debug/
 Release/
+
+# folder
+c/
+
+# CSharp
+bin/
+obj/
