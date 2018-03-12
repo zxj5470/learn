@@ -18,23 +18,10 @@ void split(const string source, const string &delimiter, vector<string> &ret) {
     ret.push_back(source.substr(currentOffset, sourceLength - currentOffset + 1));
 }
 
-int main() {
-    ifstream fin("../data.csv");
-    string s;
-    vector<vector<int>> data;
-    while (fin >> s) {
-        vector<string> temp;
-        vector<int> ints;
-        split(s, ",", temp);
-        std::for_each(temp.begin(), temp.end(),
-                      [&ints](string it) {
-                          ints.push_back(atoi(it.c_str()));
-                      });
-        data.push_back(ints);
-    }
+void handle(vector<vector<int>> &data) {
+    bool bools[MAX][MAX];
     size_t rows = data.size();
     size_t cols = data[0].size();
-    bool bools[MAX][MAX];
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
             bools[i][j] = true;
@@ -66,5 +53,22 @@ int main() {
             }
         }
     }
+}
+
+int main() {
+    ifstream fin("../data.csv");
+    string s;
+    vector<vector<int>> data;
+    while (fin >> s) {
+        vector<string> temp;
+        vector<int> ints;
+        split(s, ",", temp);
+        std::for_each(temp.begin(), temp.end(),
+                      [&ints](string it) {
+                          ints.push_back(atoi(it.c_str()));
+                      });
+        data.push_back(ints);
+    }
+    handle(data);
     return 0;
 }
