@@ -40,16 +40,15 @@ void handle(vector<vector<int>> &data) {
                             break;
                         }
                     }
-                    if (flag) {
-                        c++;
-                    } else break;
+                    if (flag) c++;
+                    else break;
                 }
                 for (int m = i; m < i + c; m++) {
                     for (int n = j; n < j + c; n++) {
                         bools[m][n] = false;
                     }
                 }
-                printf("(%d,%d,%d,%d)\n", i + 1, j + 1, data[i][j], c);
+                printf("(%d,%d,%d,%d)\n", i + 1, j + 1, value, c);
             }
         }
     }
