@@ -32,14 +32,15 @@ void handle(vector<vector<int>> &data) {
 			if (bools[i][j]) {
 				int c = 1;
 				int value = data[i][j];
-				out:while (i + c < rows && j + c < cols && data[i + c][j + c] == value) {
+				while (i + c < rows && j + c < cols && data[i + c][j + c] == value) {
 					for (int k = 1; k <= c; k++) {
 						if (data[i + c - k][j + c] != value || data[i + c][j + c - k] != value) {
-							goto out;
+							goto s;
 						}
 					}
 					c++;
 				}
+				s:
 				for (int m = i; m < i + c; m++) {
 					for (int n = j; n < j + c; n++) {
 						bools[m][n] = false;
@@ -52,7 +53,7 @@ void handle(vector<vector<int>> &data) {
 }
 
 int main() {
-	ifstream fin("../data.csv");
+	ifstream fin("./data.csv");
 	string s;
 	vector<vector<int>> data;
 	while (fin >> s) {
