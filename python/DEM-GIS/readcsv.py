@@ -9,7 +9,7 @@ for each in lines:
 
 def printit(begin, j, tmp):
     print('(', end='')
-    print(begin, j - 1, tmp, sep=',', end='')
+    print(begin+1, j, tmp, sep=',', end='')
     print(')', end='')
 
 
