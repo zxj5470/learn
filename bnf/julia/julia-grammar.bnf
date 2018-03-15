@@ -1,0 +1,8 @@
+juliaFile ::= endOfLine statements
+
+statements ::= semi* (statement (semi+ statement)*)? semi*
+
+private statement ::=
+   moduleDeclaration
+ | globalStatement
+ | expr (COMMA_SYM expr)*
