@@ -1,12 +1,9 @@
-#include <fstream>
+
 #include "gisdem.h"
 
-inline int random(int fromZeroTo) {
-	return (int) random() % fromZeroTo;
-}
+static auto seed = time(NULL);
 
 void GisDEM::init() {
-//	srand((unsigned) time(0));
 	for (int i = 0; i < h; i++) {
 		vector<double> rowData;
 		vector<double> rowOutput;
@@ -20,9 +17,9 @@ void GisDEM::init() {
 
 	//random generation
 	for (int i = 0; i < h * w / (p * p); i++) {
-		int a = random(h);
-		auto b = random(w);
-		auto h = 30 + random(100);
+		int a = gisRandom(h);
+		auto b = gisRandom(w);
+		auto h = 30 + gisRandom(100);
 		data[a][b] = h;
 		output[a][b] = h;
 	}
@@ -260,6 +257,12 @@ GisDEM::GisDEM() {
 	h = 50;
 	p = 5;
 	r = 3;
+}
+
+int GisDEM::gisRandom(int zeroTo) {
+	srand((unsigned)seed);
+	seed = rand();
+	return rand() % zeroTo;
 }
 
 /**

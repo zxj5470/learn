@@ -4,6 +4,9 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <fstream>
+#include <random>
+#include <chrono>
 
 using namespace std;
 
@@ -13,7 +16,7 @@ public:
 
 	void init();
 
-	void set(int w, int h, int p,int r);
+	void set(int w, int h, int p, int r);
 
 	const char *sourceToFile();
 
@@ -22,7 +25,9 @@ public:
 private:
 	vector<vector<double>> data;
 	vector<vector<double>> output;
-	int w, h, p,r;
+	int w, h, p, r;
+
+	int gisRandom(int zeroTo);
 
 	double v(int dx, int dy);
 
@@ -39,12 +44,13 @@ private:
 	void calcTopAndBottom(int i, int j, int n);
 
 	void calcLeftAndRight(int i, int j, int n);
+
 };
 
 static GisDEM gis;
 
 extern "C" {
 void run();
-void setParam(int w, int h, int p,int r);
+void setParam(int w, int h, int p, int r);
 }
 #endif
