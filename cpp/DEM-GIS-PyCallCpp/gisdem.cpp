@@ -1,3 +1,4 @@
+#include <fstream>
 #include "gisdem.h"
 
 inline int random(int fromZeroTo) {
@@ -5,15 +6,20 @@ inline int random(int fromZeroTo) {
 }
 
 void GisDEM::init() {
+//	srand((unsigned) time(0));
 	for (int i = 0; i < h; i++) {
+		vector<double> rowData;
+		vector<double> rowOutput;
 		for (int j = 0; j < w; ++j) {
-			data[i][j] = 0;
-			output[i][j] = data[i][j];
+			rowData.push_back(0.0);
+			rowOutput.push_back(0.0);
 		}
+		data.push_back(rowData);
+		output.push_back(rowOutput);
 	}
 
 	//random generation
-	for (int i = 0; i < h * w / 3; i++) {
+	for (int i = 0; i < h * w / (p * p); i++) {
 		int a = random(h);
 		auto b = random(w);
 		auto h = 30 + random(100);
@@ -26,36 +32,38 @@ void GisDEM::init() {
 void GisDEM::calculate() {
 	for (int i = 0; i < h; i++) {
 		for (int j = 0; j < w; ++j) {
-			calculateEach(i, j);
+//			calculateEach(i, j);
+			calculateRefactor(i, j);
 		}
 	}
 }
 
-const char *GisDEM::sourceToString() {
+const char *GisDEM::sourceToFile() {
 	str.clear();
 	for (int i = 0; i < h; i++) {
-		for (int j = 0; j < w - 1; ++j) {
+		for (int j = 0; j < w; ++j) {
 			str += to_string(data[i][j]);
-			str += "\t";
+			if (j != w - 1)str += ",";
 		}
-		str += to_string(data[i][w - i]);
 		if (i != h - 1)str += "\n";
 	}
+	ofstream fout("./input.csv");
+	fout << str;
+	fout.close();
 	return str.c_str();
 }
 
-const char *GisDEM::resultToString() {
+void GisDEM::resultOutputFile() {
 	calculate();
-	str.clear();
+	ofstream fout("./data.csv");
 	for (int i = 0; i < h; i++) {
-		for (int j = 0; j < w - 1; ++j) {
-			str += to_string(output[i][j]);
-			str += "\t";
+		for (int j = 0; j < w; ++j) {
+			fout << double(output[i][j]);
+			if (j != w - 1)fout << ",";
 		}
-		str += to_string(output[i][w - i]);
-		if (i != h - 1)str += "\n";
+		if (i != h - 1)fout << "\n";
 	}
-	return str.c_str();
+	fout.close();
 }
 
 
@@ -68,8 +76,7 @@ const char *GisDEM::resultToString() {
  * @return
  */
 void GisDEM::calculateEach(int i, int j) {
-	int c = 1;
-	for (int n = 1; n <= c; n++) {
+	for (int n = 1; n <= r; n++) {
 		// bottom
 		if (i + n < h) {
 			//考虑正下方的非对角线数据
@@ -84,7 +91,8 @@ void GisDEM::calculateEach(int i, int j) {
 			}
 		}
 
-		if (i - n >= 0) { // top
+		// top
+		if (i - n >= 0) {
 			//考虑正上方的非对角线数据
 			inc(i, j, -n, 0);
 			for (int k = 1; k < n; k++) { // n > 1 时才会执行
@@ -139,38 +147,131 @@ void GisDEM::calculateEach(int i, int j) {
 			inc(i, j, -n, n);
 		}
 
-
 	}
 }
 
+/**
+ * 计算权值
+ * @param dx
+ * @param dy
+ * @return
+ */
 inline double GisDEM::v(int dx, int dy) {
-	return 1.0 / sqrt(dx * dx + dy * dy);
+	return 0.5 * 1.0 / sqrt(dx * dx + dy * dy);
 }
 
+/**
+ *
+ * @param i
+ * @param j
+ * @param di 与i的坐标差。有正有负。
+ * @param dj 与j的坐标差。有正有负。
+ */
 inline void GisDEM::inc(int i, int j, int di, int dj) {
-//	cout << "(" << i << "," << j << "): [" << i + di << "," << j + dj << "]\t" << data[i + di][j + dj] * v(di, dj) << "\tdata = ";
 	output[i][j] += data[i + di][j + dj] * v(di, dj);
-	cout << "(" << i << "," << j << ")\t" << output[i][j] << endl;
 }
 
-void GisDEM::println() {
-	cout << output[4][5] << endl;
+void GisDEM::calculateRefactor(int i, int j) {
+	for (int n = 1; n <= r; n++) {
+		//考虑正下方的非对角线数据
+		if (i + n < h) {
+			calcTopAndBottom(i, j, n);
+		}
+		//考虑正上方的非对角线数据
+		if (i - n >= 0) {
+			calcTopAndBottom(i, j, -n);
+		}
+
+		//考虑正左方的非对角线数据
+		if (j - n >= 0) { // left
+			calcLeftAndRight(i, j, -n);
+		}
+
+		//考虑正右方的非对角线数据
+		if (j + n < w) { //right
+			calcLeftAndRight(i, j, n);
+		}
+
+		//左下右下
+		if (i + n < h && j - n >= 0) {
+			inc(i, j, n, -n);
+		}
+		if (i + n < h && j + n < w) {
+			inc(i, j, n, n);
+		}
+
+		//左上右上
+		if (i - n >= 0 && j - n >= 0) {
+			inc(i, j, -n, -n);
+		}
+		if (i - n >= 0 && j + n < w) {
+			inc(i, j, -n, n);
+		}
+
+	}
+
+}
+
+/**
+ * j
+ * @param i
+ * @param j
+ * @param n 大于零表示取右侧的值，小于0表示取左侧的值。
+ */
+void GisDEM::calcLeftAndRight(int i, int j, int n) {
+	inc(i, j, 0, n);
+	for (int k = 1; k < abs(n); k++) { // n > 1 时才会执行
+		if (i + k < h) {
+			inc(i, j, k, n);
+		}
+		if (i - k >= 0) {
+			inc(i, j, -k, n);
+		}
+	}
+}
+
+/**
+ *
+ * @param i
+ * @param j
+ * @param n 大于零表示取下侧的值，小于零表示取左侧的值
+ */
+void GisDEM::calcTopAndBottom(int i, int j, int n) {
+	inc(i, j, n, 0);
+	for (int k = 1; k < abs(n); k++) { // n > 1 时才会执行
+		if (j + k < w) {
+			inc(i, j, n, k);
+		}
+		if (j - k >= 0) {
+			inc(i, j, n, -k);
+		}
+	}
+}
+
+void GisDEM::set(int w, int h, int p, int r) {
+	this->w = w;
+	this->h = h;
+	this->p = p;
+	this->r = r;
+}
+
+GisDEM::GisDEM() {
+	w = 50;
+	h = 50;
+	p = 5;
+	r = 3;
 }
 
 /**
  * DLL
  */
 
-const char *source() {
+void run() {
 	gis.init();
-	return gis.sourceToString();
+	gis.sourceToFile();
+	gis.resultOutputFile();
 }
 
-const char *result() {
-	gis.init();
-	return gis.resultToString();
+void setParam(int w, int h, int p, int r) {
+	gis.set(w, h, p, r);
 }
-
-int getWidth() { return w; }
-
-int getHeight() { return h; }

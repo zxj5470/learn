@@ -13,29 +13,28 @@ os = platform.system()
 dll_ext = {
     "Darwin": "dylib",  # Mac OS
     "Linux": "so",
-    "Windows": "dll"
+    "Windows": "dll"  # windows 64bit python cannot call a 32bit dll ……
 }
 dll = load_dll('./libgisdem' + '.' + dll_ext[os])
-dll.source.restype = ctypes.c_char_p
-dll.result.restype = ctypes.c_char_p
+dll.setParam(50, 50, 6, 4)
+dll.run()
 
-width = dll.getWidth()
-height = dll.getHeight()
-
-source_lines = (str(dll.source().decode('ascii')).split("\n"))
-result_lines = (str(dll.result().decode('ascii')).split("\n"))
+source_lines = open('input.csv').readlines()
+result_lines = open('data.csv').readlines()
 
 
 def show(lines):
     data = []
     for each_row in lines:
-        each_rows_chars = each_row.split("\t")
+        each_rows_chars = each_row.split(",")
         row_data = []
         for each in each_rows_chars:
             row_data.append(float(each))
-        data += row_data
+        data.append(row_data)
 
     print(data)
+    height = data.__len__()
+    width = data[0].__len__()
     a = np.array(data).reshape(width, height)
     plt.imshow(a, interpolation='nearest', cmap='hot_r', origin='upper')
     plt.colorbar(shrink=0.9)

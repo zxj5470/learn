@@ -3,35 +3,48 @@
 
 #include <iostream>
 #include <cmath>
-using namespace std;
+#include <vector>
 
-const int w = 6;
-const int h = 6;
+using namespace std;
 
 class GisDEM {
 public:
+	GisDEM();
+
 	void init();
-	const char *sourceToString();
-	const char *resultToString();
-	void println();
+
+	void set(int w, int h, int p,int r);
+
+	const char *sourceToFile();
+
+	void resultOutputFile();
 
 private:
-	double data[h][w]{0.0};
-	double output[h][w]{0.0};
-	double v(int dx,int dy);
-	void inc(int i,int j,int di,int dj);
+	vector<vector<double>> data;
+	vector<vector<double>> output;
+	int w, h, p,r;
+
+	double v(int dx, int dy);
+
+	void inc(int i, int j, int di, int dj);
+
 	void calculateEach(int i, int j);
+
+	void calculateRefactor(int i, int j);
+
 	void calculate();
+
 	string str;
+
+	void calcTopAndBottom(int i, int j, int n);
+
+	void calcLeftAndRight(int i, int j, int n);
 };
 
-static GisDEM gis{};
+static GisDEM gis;
 
 extern "C" {
-const char *source();
-const char *result();
-int getHeight();
-int getWidth();
+void run();
+void setParam(int w, int h, int p,int r);
 }
-
 #endif

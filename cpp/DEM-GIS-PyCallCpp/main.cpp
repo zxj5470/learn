@@ -9,12 +9,8 @@ using namespace std;
  * @return
  */
 int main() {
-	int height = getHeight();
-	int width = getWidth();
-	printf("%d,%d\n", height, width);
 	gis.init();
-	cout << gis.sourceToString() << endl << endl;
-	cout << gis.resultToString() << endl;
-	gis.println();
+	cout << gis.sourceToFile() << endl << endl;
+	gis.resultOutputFile();
 	return 0;
 }
