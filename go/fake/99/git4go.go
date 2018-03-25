@@ -12,9 +12,9 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-	str, er := repo.StatusFile("go/fake/99/git4go.go")
-	if er == nil {
-		fmt.Println(str)
+	strs, err := repo.Remotes.List()
+	for i, v := range strs {
+		fmt.Println(i, v)
 	}
 	fmt.Print(git.StatusWtNew)
 }
