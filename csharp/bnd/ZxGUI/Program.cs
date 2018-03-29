@@ -33,7 +33,7 @@ namespace bnd.ZxGUI{
             }
 
             public void MouseEvent(AreaBase area, ref AreaMouseEvent mouseEvent) {
-                Console.WriteLine(mouseEvent.IsDownEvent() + "," + mouseEvent.IsUpEvent()+"(,"+mouseEvent.X+","+mouseEvent.Y+")");
+                Console.WriteLine(mouseEvent.IsDownEvent() + "," + mouseEvent.IsUpEvent()+"("+mouseEvent.X+","+mouseEvent.Y+")");
             }
 
             public void MouseCrossed(AreaBase area, bool left) {
