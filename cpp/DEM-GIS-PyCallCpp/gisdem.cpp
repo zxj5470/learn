@@ -52,7 +52,7 @@ const char *GisDEM::sourceToFile() {
 
 void GisDEM::resultOutputFile() {
 	calculate();
-	ofstream fout("./data.csv");
+	ofstream fout("./output.csv");
 	for (int i = 0; i < h; i++) {
 		for (int j = 0; j < w; ++j) {
 			fout << double(output[i][j]);

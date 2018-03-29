@@ -16,14 +16,14 @@ dll_ext = {
     "Windows": "dll"  # windows 64bit python cannot call a 32bit dll ……
 }
 dll = load_dll('./libgisdem' + '.' + dll_ext[os])
-dll.setParam(50, 50, 6, 4)
+dll.setParam(20, 20, 6, 4)
 dll.run()
 
 source_lines = open('input.csv').readlines()
-result_lines = open('data.csv').readlines()
+result_lines = open('output.csv').readlines()
 
 
-def show(lines):
+def idw(lines):
     data = []
     for each_row in lines:
         each_rows_chars = each_row.split(",")
@@ -32,7 +32,7 @@ def show(lines):
             row_data.append(float(each))
         data.append(row_data)
 
-    print(data)
+    # print(data)
     height = data.__len__()
     width = data[0].__len__()
     a = np.array(data).reshape(width, height)
@@ -40,7 +40,7 @@ def show(lines):
     plt.colorbar(shrink=0.9)
 
 
-show(source_lines)
+idw(source_lines)
 plt.figure()
-show(result_lines)
+idw(result_lines)
 plt.show()
