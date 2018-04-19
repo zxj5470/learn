@@ -8,7 +8,8 @@ open class ArraySet<E> : AbstractSet<E> {
 	 * Create an empty set with the specified initial capacity.
 	 * @param initialCapacity the initial capacity
 	 */
-	@JvmOverloads constructor(initialCapacity: Int = 3) {
+	@JvmOverloads
+	constructor(initialCapacity: Int = 3) {
 		items = ArrayList(initialCapacity)
 	}
 
@@ -57,6 +58,3 @@ open class ArraySet<E> : AbstractSet<E> {
 		get() = items!!.size
 
 }
-/**
- * Create an empty set (default initial capacity is 3).
- */

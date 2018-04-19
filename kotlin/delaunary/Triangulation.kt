@@ -38,13 +38,12 @@ import java.util.*
  * the Graph class internally. Tried to make the DT algorithm clearer by
  * explicitly creating a cavity.  Added code needed to find a Voronoi cell.
  */
-internal class Triangulation(triangle: Triangle) : ArraySet<Triangle>() {
+class Triangulation(triangle: Triangle) : ArraySet<Triangle>() {
 
 	private var mostRecent: Triangle? = null      // Most recently "active" triangle
-	private val triGraph: Graph<Triangle>        // Holds triangles for navigation
+	private val triGraph: Graph<Triangle> = Graph()        // Holds triangles for navigation
 
 	init {
-		triGraph = Graph()
 		triGraph.add(triangle)
 		mostRecent = triangle
 	}
@@ -52,25 +51,15 @@ internal class Triangulation(triangle: Triangle) : ArraySet<Triangle>() {
 	/* The following two methods are required by AbstractSet */
 
 	override fun iterator(): MutableIterator<Triangle> {
-		return triGraph.nodeSet()!!.iterator()
+		return triGraph.nodeSet().iterator()
 	}
 
-//	override fun size(): Int {
-//		return triGraph.nodeSet().size
-//	}
+	override val size
+		get() = triGraph.nodeSet().size
 
 	override fun toString(): String {
 		return "Triangulation with $size triangles"
 	}
-
-//	/**
-//	 * True iff triangle is a member of this triangulation.
-//	 * This method isn't required by AbstractSet, but it improves efficiency.
-//	 * @param triangle the object to check for membership
-//	 */
-//	override operator fun contains(triangle: Triangulation?): Boolean {
-//		return triGraph.nodeSet().contains(triangle)
-//	}
 
 	/**
 	 * Report neighbor opposite the given vertex of triangle.
@@ -79,7 +68,7 @@ internal class Triangulation(triangle: Triangle) : ArraySet<Triangle>() {
 	 * @return the neighbor opposite site in triangle; null if none
 	 * @throws IllegalArgumentException if site is not in this triangle
 	 */
-	fun neighborOpposite(site: Pnt, triangle: Triangle): Triangle? {
+	private fun neighborOpposite(site: Pnt, triangle: Triangle): Triangle? {
 		if (!triangle.contains(site))
 			throw IllegalArgumentException("Bad vertex; not in triangle")
 		for (neighbor in triGraph.neighbors(triangle)) {
@@ -97,40 +86,16 @@ internal class Triangulation(triangle: Triangle) : ArraySet<Triangle>() {
 		return triGraph.neighbors(triangle)
 	}
 
-	/**
-	 * Report triangles surrounding site in order (cw or ccw).
-	 * @param site we want the surrounding triangles for this site
-	 * @param triangle a "starting" triangle that has site as a vertex
-	 * @return all triangles surrounding site in order (cw or ccw)
-	 * @throws IllegalArgumentException if site is not in triangle
-	 */
-	fun surroundingTriangles(site: Pnt, triangle: Triangle): List<Triangle> {
-		var tri = triangle
-		if (!tri.contains(site))
-			throw IllegalArgumentException("Site not in triangle")
-		val list = ArrayList<Triangle>()
-		val start = tri
-		var guide = tri.getVertexButNot(site)        // Affects cw or ccw
-		while (true) {
-			list.add(tri)
-			val previous = tri
-			tri = this.neighborOpposite(guide, tri)!! // Next triangle
-			guide = previous.getVertexButNot(site, guide)     // Update guide
-			if (tri === start) break
-		}
-		return list
-	}
 
 	/**
 	 * Locate the triangle with point inside it or on its boundary.
 	 * @param point the point to locate
 	 * @return the triangle that holds point; null if no such triangle
 	 */
-	fun locate(point: Pnt): Triangle? {
+	private fun locate(point: Pnt): Triangle? {
 		var triangle = mostRecent
 		if (!this.contains(triangle)) triangle = null
 
-		// Try a directed walk (this works fine in 2D, but can fail in 3D)
 		val visited = HashSet<Triangle>()
 		while (triangle != null) {
 			if (visited.contains(triangle)) { // This should never happen
@@ -138,17 +103,14 @@ internal class Triangulation(triangle: Triangle) : ArraySet<Triangle>() {
 				break
 			}
 			visited.add(triangle)
-			// Corner opposite point
 			val corner = point.isOutside(triangle.toTypedArray()) ?: return triangle
 			triangle = this.neighborOpposite(corner, triangle)
 		}
-		// No luck; try brute force
-		println("Warning: Checking all triangles for " + point)
+		println("Warning: Checking all triangles for $point")
 		for (tri in this) {
 			if (point.isOutside(tri.toTypedArray()) == null) return tri
 		}
-		// No such triangle
-		println("Warning: No triangle holds " + point)
+		println("Warning: No triangle holds $point")
 		return null
 	}
 
@@ -251,7 +213,7 @@ internal class Triangulation(triangle: Triangle) : ArraySet<Triangle>() {
 	companion object {
 
 		/**
-		 * Main program; used for testing.
+		 * test
 		 */
 		@JvmStatic
 		fun main(args: Array<String>) {

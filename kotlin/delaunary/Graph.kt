@@ -98,7 +98,7 @@ class Graph<N> {
 	 * the set.
 	 * @return a Set view of the graph's node set
 	 */
-	fun nodeSet(): MutableSet<N>? {
+	fun nodeSet(): MutableSet<N> {
 		return theNodeSet
 	}
 

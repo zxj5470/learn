@@ -35,7 +35,7 @@ import java.util.NoSuchElementException
  *
  * Created December 2007. Replaced general simplices with geometric triangle.
  */
-internal class Triangle
+class Triangle
 /**
  * @param collection a Collection holding the Simplex vertices
  * @throws IllegalArgumentException if there are not three distinct vertices
@@ -58,7 +58,7 @@ internal class Triangle
 	}
 
 	override fun toString(): String {
-		return if (!moreInfo) "Triangle" + idNumber else "Triangle" + idNumber + super.toString()
+		return if (!moreInfo) "Triangle$idNumber" else "Triangle" + idNumber + super.toString()
 	}
 
 	/**
@@ -106,11 +106,6 @@ internal class Triangle
 		return circumcenter?: Pnt.circumcenter(this.toTypedArray())
 	}
 
-	/* The following two methods ensure that a Triangle is immutable */
-
-	fun add(vertex: Pnt?): Boolean {
-		throw UnsupportedOperationException()
-	}
 
 	override fun iterator(): MutableIterator<Pnt> {
 		return object : MutableIterator<Pnt> {
@@ -135,8 +130,8 @@ internal class Triangle
 		return idNumber xor idNumber.ushr(32)
 	}
 
-	override fun equals(o: Any?): Boolean {
-		return this === o
+	override fun equals(other: Any?): Boolean {
+		return this === other
 	}
 
 	companion object {

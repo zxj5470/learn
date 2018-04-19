@@ -1,10 +1,23 @@
+/**
+ *
+ * @property coordinates DoubleArray
+ * @property x Double
+ * @property y Double
+ * @constructor
+ */
 class Pnt(vararg coords: Double) {
+
 	private val coordinates: DoubleArray = DoubleArray(coords.size)
 
+	val x
+		get() = this[0]
+	val y
+		get() = this[1]
+
 	init {
-		// Copying is done here to ensure that Pnt's coords cannot be altered.
-		// This is necessary because the double... notation actually creates a
-		// constructor with double[] as its argument.
+		/**
+		 * from coords to `coordinates`
+		 */
 		System.arraycopy(coords, 0, coordinates, 0, coords.size)
 	}
 
@@ -41,9 +54,7 @@ class Pnt(vararg coords: Double) {
 	 * @return the specified coordinate of this Pnt
 	 * @throws ArrayIndexOutOfBoundsException for bad coordinate
 	 */
-	fun coord(i: Int): Double {
-		return this.coordinates[i]
-	}
+	operator fun get(i:Int):Double = this.coordinates[i]
 
 	/**
 	 * @return this Pnt's dimension.
@@ -115,10 +126,9 @@ class Pnt(vararg coords: Double) {
 	 */
 	fun add(p: Pnt): Pnt {
 		val len = dimCheck(p)
-		val coords = DoubleArray(len)
-		for (i in 0 until len)
-			coords[i] = this.coordinates[i] + p.coordinates[i]
-		return Pnt(*coords)
+		return (0 until len).map{
+			this.coordinates[it]+p.coordinates[it]
+		}.toDoubleArray().let(::Pnt)
 	}
 
 	/**
@@ -403,7 +413,7 @@ class Pnt(vararg coords: Double) {
 		@JvmStatic
 		fun main(args: Array<String>) {
 			val p = Pnt(1, 2, 3)
-			println("Pnt created: " + p)
+			println("Pnt created: $p")
 			val matrix1 = arrayOf(Pnt(1, 2), Pnt(3, 4))
 			val matrix2 = arrayOf(Pnt(7, 0, 5), Pnt(2, 4, 6), Pnt(3, 8, 1))
 			print("Results should be -2 and -288: ")
