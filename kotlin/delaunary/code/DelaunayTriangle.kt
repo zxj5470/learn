@@ -21,13 +21,13 @@
 import java.util.*
 
 /**
- * A 2D Delaunay Triangulation (DT) with incremental site insertion.
+ * A 2D Delaunay DelaunayTriangle (DT) with incremental site insertion.
  *
  * This is not the fastest way to build a DT, but it's a reasonable way to build
  * a DT incrementally and it makes a nice interactive display. There are several
  * O(n log n) methods, but they require that the sites are all known initially.
  *
- * A Triangulation is a Set of Triangles. A Triangulation is unmodifiable as a
+ * A DelaunayTriangle is a Set of Triangles. A DelaunayTriangle is unmodifiable as a
  * Set; the only way to change it is to add sites (via delaunayPlace).
  *
  * @author Paul Chew
@@ -38,7 +38,7 @@ import java.util.*
  * the Graph class internally. Tried to make the DT algorithm clearer by
  * explicitly creating a cavity.  Added code needed to find a Voronoi cell.
  */
-class Triangulation(triangle: Triangle) : ArraySet<Triangle>() {
+class DelaunayTriangle(triangle: Triangle) : ArraySet<Triangle>() {
 
 	private var mostRecent: Triangle? = null      // Most recently "active" triangle
 	private val triGraph: Graph<Triangle> = Graph()        // Holds triangles for navigation
@@ -58,7 +58,7 @@ class Triangulation(triangle: Triangle) : ArraySet<Triangle>() {
 		get() = triGraph.nodeSet().size
 
 	override fun toString(): String {
-		return "Triangulation with $size triangles"
+		return "DelaunayTriangle with $size triangles"
 	}
 
 	/**
@@ -211,15 +211,11 @@ class Triangulation(triangle: Triangle) : ArraySet<Triangle>() {
 	}
 
 	companion object {
-
-		/**
-		 * test
-		 */
 		@JvmStatic
 		fun main(args: Array<String>) {
 			val tri = Triangle(Pnt(-10, 10), Pnt(10, 10), Pnt(0, -10))
 			println("Triangle created: $tri")
-			val dt = Triangulation(tri)
+			val dt = DelaunayTriangle(tri)
 			println("DelaunayTriangulation created: $dt")
 			dt.delaunayPlace(Pnt(0, 0))
 			dt.delaunayPlace(Pnt(1, 0))

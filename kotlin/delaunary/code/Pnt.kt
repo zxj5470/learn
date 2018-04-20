@@ -1,3 +1,5 @@
+
+
 /**
  *
  * @property coordinates DoubleArray
@@ -166,7 +168,7 @@ class Pnt(vararg coords: Double) {
 		/* In 2D, we compute the cross of this matrix:
          *    1   1   1   1
          *    p0  a0  b0  c0
-         *    p1  a1  b1  c1
+         *    getP1  a1  b1  c1
          * where (a, b, c) is the simplex and p is this Pnt. The result is a
          * vector in which the first coordinate is the signed area (all signed
          * areas are off by the same constant factor) of the simplex and the

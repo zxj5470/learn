@@ -1,9 +1,6 @@
 import java.awt.*
 import javax.swing.JPanel
 
-/**
- * Graphics Panel for DelaunayMain.
- */
 class DelaunayPanel(private val parent: DelaunayMain) : JPanel() {
 	private var all: DelaunayTriangle
 	private lateinit var g: Graphics2D

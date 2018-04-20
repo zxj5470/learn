@@ -9,11 +9,11 @@ val Pnt.y
 
 fun Graphics2D.antiAliasing() = this.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
 
-val Triangle.p1
+val Triangle.p1: Pnt
 	get() = this[0]
 
-val Triangle.p2
+val Triangle.p2: Pnt
 	get() = this[1]
 
-val Triangle.p3
+val Triangle.p3: Pnt
 	get() = this[2]

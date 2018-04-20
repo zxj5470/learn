@@ -27,7 +27,7 @@ import java.util.HashMap
  *
  * @author Paul Chew
  *
- * Created November, December 2007.  For use in Delaunay/Voronoi code.
+ * Created November, December 2007.  For use in Delaunay/Voronoi
  */
 class Graph<N> {
 
