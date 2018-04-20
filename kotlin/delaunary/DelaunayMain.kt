@@ -20,28 +20,27 @@
 
 import java.awt.*
 import java.awt.event.*
-
 import javax.swing.*
 
 /**
  * The Delaunay applet.
  *
- * Creates and displays a Delaunay Triangulation (DT) or a Voronoi Diagram
+ * Creates and displays a Delaunay DelaunayTriangle (DT) or a Voronoi Diagram
  * (VoD). Has a main program so it is an application as well as an applet.
  *
  * @author Paul Chew
  *
  * Created July 2005. Derived from an earlier, messier version.
  *
- * Modified December 2007. Updated some of the Triangulation methods. Added the
+ * Modified December 2007. Updated some of the DelaunayTriangle methods. Added the
  * "Colorful" checkbox. Reorganized the interface between DelaunayMain and
  * DelaunayPanel. Added code to find a Voronoi cell.
  */
-class DelaunayMain : javax.swing.JApplet(), Runnable, ActionListener, MouseListener,MouseMotionListener {
-	private val clearButton = JButton("Clear")
-	private val showCircleCheckBox = JCheckBox("Show All Circumscribed circle")
+class DelaunayMain : javax.swing.JApplet(), Runnable, ActionListener, MouseListener, MouseMotionListener {
+	private val clearButton = JButton("清除")
+	private val showCircleCheckBox = JCheckBox("显示外接圆")
 	private val delaunayPanel = DelaunayPanel(this)
-	private val coordText = JLabel("")
+	private val coordText = JLabel("(0,0)")
 
 	/**
 	 * As recommended, the actual use of Swing components takes place in the
@@ -74,6 +73,7 @@ class DelaunayMain : javax.swing.JApplet(), Runnable, ActionListener, MouseListe
 		clearButton.addActionListener(this)
 		showCircleCheckBox.addActionListener(this)
 		delaunayPanel.addMouseListener(this)
+		delaunayPanel.addMouseMotionListener(this)
 	}
 
 	/**
@@ -94,9 +94,7 @@ class DelaunayMain : javax.swing.JApplet(), Runnable, ActionListener, MouseListe
 	/**
 	 * If exiting a mouse-entry switch then redraw the picture.
 	 */
-	override fun mouseExited(e: MouseEvent) {
-		if (e.component is JLabel) delaunayPanel.repaint()
-	}
+	override fun mouseExited(e: MouseEvent) {}
 
 	/**
 	 * If mouse has been pressed inside the delaunayPanel then add a new site.
@@ -117,14 +115,14 @@ class DelaunayMain : javax.swing.JApplet(), Runnable, ActionListener, MouseListe
 
 
 	override fun mouseMoved(e: MouseEvent) {
-		coordText.text="( ${e.x} , ${e.y} )"
+		coordText.text = "( ${e.x} , ${e.y} )"
 	}
 
 	override fun mouseDragged(e: MouseEvent) {}
 
 	companion object {
 
-		private const val title = "三角"
+		private const val title = "三角网"
 
 		/**
 		 * Main program (used when run as application instead of applet).
@@ -151,4 +149,5 @@ class DelaunayMain : javax.swing.JApplet(), Runnable, ActionListener, MouseListe
 
 	val showCircle
 		get() = showCircleCheckBox.isSelected
+
 }

@@ -5,7 +5,7 @@ import javax.swing.JPanel
  * Graphics Panel for DelaunayMain.
  */
 class DelaunayPanel(private val parent: DelaunayMain) : JPanel() {
-	private var all: Triangulation
+	private var all: DelaunayTriangle
 	private lateinit var g: Graphics2D
 	private var initialTriangle = Triangle(
 			Pnt(-initCoord, -initCoord),
@@ -13,7 +13,7 @@ class DelaunayPanel(private val parent: DelaunayMain) : JPanel() {
 			Pnt(0, initCoord))
 
 	init {
-		all = Triangulation(initialTriangle)
+		all = DelaunayTriangle(initialTriangle)
 	}
 
 	/**
@@ -28,7 +28,7 @@ class DelaunayPanel(private val parent: DelaunayMain) : JPanel() {
 	 * Re-initialize the DT.
 	 */
 	fun clear() {
-		all = Triangulation(initialTriangle)
+		all = DelaunayTriangle(initialTriangle)
 	}
 
 	/* Basic Drawing Methods */
@@ -73,8 +73,8 @@ class DelaunayPanel(private val parent: DelaunayMain) : JPanel() {
 		all.filter {
 			!it.any { it.y == initCoordD || it.y == -initCoordD }
 		}.forEach {
-			val center = it.getCircumcenter()
-			val radius = center.subtract(it[0]).magnitude()
+			val center = it.getCircumCenter()
+			val radius = center.subtract(it[0]).distanceEuclidean()
 			drawCircle(center, radius)
 		}
 		g.stroke = stroke
@@ -106,10 +106,10 @@ class DelaunayPanel(private val parent: DelaunayMain) : JPanel() {
 	}
 
 	private fun drawBackground() {
-//		val color = g.color
+		val color = g.color
 		g.color = tianyiBlue
 		g.fillRect(0, 0, this.width, this.height)
-//		g.color = color
+		g.color = color
 	}
 
 	private fun drawAllDelaunay() {
@@ -127,7 +127,5 @@ class DelaunayPanel(private val parent: DelaunayMain) : JPanel() {
 		private const val initCoordD = 0xcafe.toDouble()
 		var pointRadius = 3
 	}
-
-	private fun Graphics2D.antiAliasing() = this.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
 
 }

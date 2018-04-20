@@ -62,19 +62,7 @@ class Triangle
 	}
 
 	/**
-	 * Get arbitrary vertex of this triangle, but not any of the bad vertices.
-	 * @param badVertices one or more bad vertices
-	 * @return a vertex of this triangle, but not one of the bad vertices
-	 * @throws NoSuchElementException if no vertex found
-	 */
-	fun getVertexButNot(vararg badVertices: Pnt): Pnt {
-		val bad = Arrays.asList(*badVertices)
-		for (v in this) if (!bad.contains(v)) return v
-		throw NoSuchElementException("No vertex found")
-	}
-
-	/**
-	 * True iff triangles are neighbors. Two triangles are neighbors if they
+	 * True if triangles are neighbors. Two triangles are neighbors if they
 	 * share a facet.
 	 * @param triangle the other Triangle
 	 * @return true iff this Triangle is a neighbor of triangle
@@ -102,7 +90,7 @@ class Triangle
 	/**
 	 * @return the triangle's circumcenter
 	 */
-	fun getCircumcenter(): Pnt {
+	fun getCircumCenter(): Pnt {
 		return circumcenter?: Pnt.circumcenter(this.toTypedArray())
 	}
 
@@ -110,21 +98,13 @@ class Triangle
 	override fun iterator(): MutableIterator<Pnt> {
 		return object : MutableIterator<Pnt> {
 			private val it = super@Triangle.iterator()
-			override fun hasNext(): Boolean {
-				return it.hasNext()
-			}
-
-			override fun next(): Pnt {
-				return it.next()
-			}
-
+			override fun hasNext() = it.hasNext()
+			override fun next() = it.next()
 			override fun remove() {
 				throw UnsupportedOperationException()
 			}
 		}
 	}
-
-	/* The following two methods ensure that all triangles are different. */
 
 	override fun hashCode(): Int {
 		return idNumber xor idNumber.ushr(32)
@@ -135,7 +115,6 @@ class Triangle
 	}
 
 	companion object {
-
 		private var idGenerator = 0     // Used to create id numbers
 		var moreInfo = false // True iff more info in toString
 	}

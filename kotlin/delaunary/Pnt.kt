@@ -9,11 +9,6 @@ class Pnt(vararg coords: Double) {
 
 	private val coordinates: DoubleArray = DoubleArray(coords.size)
 
-	val x
-		get() = this[0]
-	val y
-		get() = this[1]
-
 	init {
 		/**
 		 * from coords to `coordinates`
@@ -34,9 +29,8 @@ class Pnt(vararg coords: Double) {
 
 	override fun equals(other: Any?): Boolean {
 		if (other !is Pnt) return false
-		val p = other as Pnt?
-		if (this.coordinates.size != p!!.coordinates.size) return false
-		return this.coordinates.indices.none { this.coordinates[it] != p.coordinates[it] }
+		if (this.coordinates.size != other.coordinates.size) return false
+		return this.coordinates.indices.none { this.coordinates[it] != other.coordinates[it] }
 	}
 
 	override fun hashCode(): Int {
@@ -48,13 +42,11 @@ class Pnt(vararg coords: Double) {
 		return hash
 	}
 
-	/* Pnts as vectors */
-
 	/**
 	 * @return the specified coordinate of this Pnt
 	 * @throws ArrayIndexOutOfBoundsException for bad coordinate
 	 */
-	operator fun get(i:Int):Double = this.coordinates[i]
+	operator fun get(i: Int): Double = this.coordinates[i]
 
 	/**
 	 * @return this Pnt's dimension.
@@ -93,17 +85,15 @@ class Pnt(vararg coords: Double) {
 	 * @param p the other Pnt
 	 * @return dot product of this Pnt and p
 	 */
-	fun dot(p: Pnt): Double {
+	private fun dot(p: Pnt): Double {
 		val len = dimCheck(p)
-		val sum = (0 until len).sumByDouble { this.coordinates[it] * p.coordinates[it] }
-		return sum
+		return (0 until len).sumByDouble { coordinates[it] * p.coordinates[it] }
 	}
 
 	/**
-	 * Magnitude (as a vector).
 	 * @return the Euclidean length of this vector
 	 */
-	fun magnitude(): Double {
+	fun distanceEuclidean(): Double {
 		return Math.sqrt(this.dot(this))
 	}
 
@@ -113,10 +103,10 @@ class Pnt(vararg coords: Double) {
 	 * @return a new Pnt = this - p
 	 */
 	fun subtract(p: Pnt): Pnt {
-		val len = dimCheck(p)
-		val coords = DoubleArray(len)
-		(0 until len).forEach { i -> coords[i] = this.coordinates[i] - p.coordinates[i] }
-		return Pnt(*coords)
+		dimCheck(p)
+		return coordinates.mapIndexed { index, d ->
+			d - p.coordinates[index]
+		}.toDoubleArray().let(::Pnt)
 	}
 
 	/**
@@ -124,10 +114,10 @@ class Pnt(vararg coords: Double) {
 	 * @param p the other Pnt
 	 * @return a new Pnt = this + p
 	 */
-	fun add(p: Pnt): Pnt {
+	private fun add(p: Pnt): Pnt {
 		val len = dimCheck(p)
-		return (0 until len).map{
-			this.coordinates[it]+p.coordinates[it]
+		return (0 until len).map {
+			this.coordinates[it] + p.coordinates[it]
 		}.toDoubleArray().let(::Pnt)
 	}
 
@@ -137,7 +127,7 @@ class Pnt(vararg coords: Double) {
 	 * @return the angle (in radians) between the two Pnts
 	 */
 	fun angle(p: Pnt): Double {
-		return Math.acos(this.dot(p) / (this.magnitude() * p.magnitude()))
+		return Math.acos(this.dot(p) / (this.distanceEuclidean() * p.distanceEuclidean()))
 	}
 
 	/**
@@ -172,7 +162,7 @@ class Pnt(vararg coords: Double) {
 	 * @return an array of signs showing relation between this Pnt and simplex
 	 * @throws IllegalArgumentException if the simplex is degenerate
 	 */
-	fun relation(simplex: Array<Pnt>): IntArray {
+	private fun relation(simplex: Array<Pnt>): IntArray {
 		/* In 2D, we compute the cross of this matrix:
          *    1   1   1   1
          *    p0  a0  b0  c0
@@ -195,7 +185,7 @@ class Pnt(vararg coords: Double) {
 		for (j in coords.indices) coords[j] = 1.0
 		matrix[0] = Pnt(*coords)
 		/* Other rows */
-		for (i in 0 until dim) {
+		for (i in 0 until dim) {// [0,dim-1]
 			coords[0] = this.coordinates[i]
 			for (j in simplex.indices)
 				coords[j + 1] = simplex[j].coordinates[i]
@@ -240,22 +230,6 @@ class Pnt(vararg coords: Double) {
 	}
 
 	/**
-	 * Test if this Pnt is on a simplex.
-	 * @param simplex the simplex (an array of Pnts)
-	 * @return the simplex Pnt that "witnesses" on-ness (or null if not on)
-	 */
-	fun isOn(simplex: Array<Pnt>): Pnt? {
-		val result = this.relation(simplex)
-		var witness: Pnt? = null
-		for (i in result.indices) {
-			if (result[i] == 0)
-				witness = simplex[i]
-			else if (result[i] > 0) return null
-		}
-		return witness
-	}
-
-	/**
 	 * Test if this Pnt is inside a simplex.
 	 * @param simplex the simplex (an arary of Pnts)
 	 * @return true iff this Pnt is inside simplex.
@@ -291,11 +265,12 @@ class Pnt(vararg coords: Double) {
 		 * @param matrix the matrix (an array of Pnts)
 		 * @return a String represenation of the matrix
 		 */
-		fun toString(matrix: Array<Pnt>): String {
-			val buf = StringBuilder("{")
-			for (row in matrix) buf.append(" " + row)
-			buf.append(" }")
-			return buf.toString()
+		private fun toString(matrix: Array<Pnt>): String {
+			return buildString {
+				append("{ ")
+				matrix.joinToString(" ") { "$it" }.let(::append)
+				append(" }")
+			}
 		}
 
 		/**
@@ -374,8 +349,6 @@ class Pnt(vararg coords: Double) {
 			return Pnt(*result)
 		}
 
-		/* Pnts as simplices */
-
 		/**
 		 * Determine the signed content (i.e., area or volume, etc.) of a simplex.
 		 * @param simplex the simplex (as an array of Pnts)
@@ -397,10 +370,11 @@ class Pnt(vararg coords: Double) {
 			val dim = simplex[0].dimension()
 			if (simplex.size - 1 != dim)
 				throw IllegalArgumentException("Dimension mismatch")
-			val matrix = arrayOfNulls<Pnt>(dim)
-			for (i in 0 until dim)
-				matrix[i] = simplex[i].bisector(simplex[i + 1])
-			val hCenter = cross(matrix as Array<Pnt>)      // Center in homogeneous coordinates
+			val matrix = simplex.mapIndexedNotNull { i, v ->
+				if (i < simplex.lastIndex) v.bisector(simplex[i + 1])
+				else null
+			}.toTypedArray()
+			val hCenter = cross(matrix)      // Center in homogeneous coordinates
 			val last = hCenter.coordinates[dim]
 			val result = DoubleArray(dim)
 			for (i in 0 until dim) result[i] = hCenter.coordinates[i] / last

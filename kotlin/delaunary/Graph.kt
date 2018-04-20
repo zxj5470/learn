@@ -101,5 +101,4 @@ class Graph<N> {
 	fun nodeSet(): MutableSet<N> {
 		return theNodeSet
 	}
-
 }

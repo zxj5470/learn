@@ -53,8 +53,6 @@ open class ArraySet<E> : AbstractSet<E> {
 		return items!!.iterator()
 	}
 
-
 	override val size
 		get() = items!!.size
-
 }
