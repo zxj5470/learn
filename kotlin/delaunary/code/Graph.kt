@@ -21,18 +21,10 @@
 import java.util.Collections
 import java.util.HashMap
 
-/**
- * Straightforward undirected graph implementation.
- * Nodes are generic type N.
- *
- * @author Paul Chew
- *
- * Created November, December 2007.  For use in Delaunay/Voronoi
- */
 class Graph<N> {
 
 	private val theNeighbors = HashMap<N, ArraySet<N>>()// Node -> adjacent nodes
-	private val theNodeSet = // Set view of all nodes
+	val nodeSet = // Set view of all nodes
 			Collections.unmodifiableSet(theNeighbors.keys)
 
 	/**
@@ -63,22 +55,11 @@ class Graph<N> {
 	 */
 	fun remove(node: N) {
 		if (!theNeighbors.containsKey(node)) return
-		for (neighbor in theNeighbors[node]!!)
-			theNeighbors[neighbor]!!.remove(node)    // Remove "to" links
+		theNeighbors[node]?.forEach {
+			theNeighbors[it]?.remove(node)
+		}
 		theNeighbors[node]!!.clear()                 // Remove "from" links
 		theNeighbors.remove(node)                      // Remove the node
-	}
-
-	/**
-	 * Remove the specified link. If link not in graph, nothing happens.
-	 * @param nodeA one end of the link
-	 * @param nodeB the other end of the link
-	 * @throws NullPointerException if either endpoint is not in graph
-	 */
-	@Throws(NullPointerException::class)
-	fun remove(nodeA: N, nodeB: N) {
-		theNeighbors[nodeA]!!.remove(nodeB)
-		theNeighbors[nodeB]!!.remove(nodeA)
 	}
 
 	/**
@@ -90,15 +71,5 @@ class Graph<N> {
 	@Throws(NullPointerException::class)
 	fun neighbors(node: N): Set<N> {
 		return Collections.unmodifiableSet(theNeighbors[node])
-	}
-
-	/**
-	 * Returns an unmodifiable Set view of the nodes contained in this graph.
-	 * The set is backed by the graph, so changes to the graph are reflected in
-	 * the set.
-	 * @return a Set view of the graph's node set
-	 */
-	fun nodeSet(): MutableSet<N> {
-		return theNodeSet
 	}
 }

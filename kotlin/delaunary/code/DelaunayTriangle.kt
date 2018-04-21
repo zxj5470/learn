@@ -1,23 +1,3 @@
-/*
- * Copyright (c) 2005, 2007 by L. Paul Chew.
- *
- * Permission is hereby granted, without written agreement and without
- * license or royalty fees, to use, copy, modify, and distribute this
- * software and its documentation for any purpose, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
- */
-
 import java.util.*
 
 /**
@@ -51,11 +31,11 @@ class DelaunayTriangle(triangle: Triangle) : ArraySet<Triangle>() {
 	/* The following two methods are required by AbstractSet */
 
 	override fun iterator(): MutableIterator<Triangle> {
-		return triGraph.nodeSet().iterator()
+		return triGraph.nodeSet.iterator()
 	}
 
 	override val size
-		get() = triGraph.nodeSet().size
+		get() = triGraph.nodeSet.size
 
 	override fun toString(): String {
 		return "DelaunayTriangle with $size triangles"
@@ -191,11 +171,12 @@ class DelaunayTriangle(triangle: Triangle) : ArraySet<Triangle>() {
 
 		// Build each new triangle and add it to the triangulation
 		val newTriangles = HashSet<Triangle>()
-		for (vertices in boundary) {
-			vertices.add(site)
-			val tri = Triangle(vertices)
-			triGraph.add(tri)
-			newTriangles.add(tri)
+		boundary.forEach {
+			it.add(site)
+			Triangle(it).apply {
+				triGraph.add(this)
+				newTriangles.add(this)
+			}
 		}
 
 		// Update the graph links for each new triangle
@@ -222,7 +203,7 @@ class DelaunayTriangle(triangle: Triangle) : ArraySet<Triangle>() {
 			dt.delaunayPlace(Pnt(0, 1))
 			println("After adding 3 points, we have a $dt")
 			Triangle.moreInfo = true
-			println("Triangles: ${dt.triGraph.nodeSet()}")
+			println("Triangles: ${dt.triGraph.nodeSet}")
 		}
 	}
 }

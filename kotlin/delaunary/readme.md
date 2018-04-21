@@ -19,6 +19,7 @@ java -jar delaunay.jar
 - ArraySet（用于三角形，确保三角形三个点不相同）
    - 添加时进行查重，若重复则不添加。`(Set)`
    - 可按照下标获取。`(Array)`
+   - 若使用Java内置的HashSet实际上仍是使用HashMap。无法做到下标取值。
 - Graph
 
 
