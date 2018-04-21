@@ -2,7 +2,7 @@ import java.util.*
 
 open class ArraySet<E> : AbstractSet<E> {
 
-	private var items: ArrayList<E>? = null            // Items of the set
+	private var items: ArrayList<E>            // Items of the set
 
 	/**
 	 * Create an empty set with the specified initial capacity.
@@ -19,10 +19,7 @@ open class ArraySet<E> : AbstractSet<E> {
 	 * @param collection the source for the items of the small set
 	 */
 	constructor(collection: Collection<E>) {
-		items = ArrayList(collection.size)
-		collection
-				.filterNot { items!!.contains(it) }
-				.forEach { items!!.add(it) }
+		items = collection.distinct().mapTo(ArrayList()) { it }
 	}
 
 	/**
@@ -33,7 +30,7 @@ open class ArraySet<E> : AbstractSet<E> {
 	 */
 	@Throws(IndexOutOfBoundsException::class)
 	operator fun get(index: Int): E {
-		return items!![index]
+		return items[index]
 	}
 
 	/**
@@ -46,13 +43,13 @@ open class ArraySet<E> : AbstractSet<E> {
 	}
 
 	override fun add(element: E): Boolean {
-		return if (items!!.contains(element)) false else items!!.add(element)
+		return if (items.contains(element)) false else items.add(element)
 	}
 
 	override fun iterator(): MutableIterator<E> {
-		return items!!.iterator()
+		return items.iterator()
 	}
 
 	override val size
-		get() = items!!.size
+		get() = items.size
 }

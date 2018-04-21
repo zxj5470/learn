@@ -70,17 +70,18 @@ class DelaunayMain : javax.swing.JApplet(), Runnable, ActionListener, MouseListe
 			} catch (e: Exception) {
 				e.printStackTrace()
 			}
-			val app = DelaunayMain()    // Create applet
-			app.init()                           // Applet initialization
-			val frame = JFrame()           // Create window
-			frame.setSize(700, 500)               // Set window size
-			frame.title = title           // Set window title
-			frame.layout = BorderLayout()   // Specify layout manager
+			val app = DelaunayMain()
+			app.init()
+			val frame = JFrame()
+			frame.setSize(700, 500)
+			frame.title = title
+			frame.layout = BorderLayout()
 			frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-			frame.add(app, "Center")           // Place applet into window
-			frame.isVisible = true                // Show the window
+			frame.add(app, "Center")
+			frame.isVisible = true
 		}
 	}
+
 	val showCircle
 		get() = showCircleCheckBox.isSelected
 }
