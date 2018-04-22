@@ -82,7 +82,7 @@ class DelaunayTriangle(triangle: Triangle) : ArraySet<Triangle>() {
 				println("Warning: Caught in a locate loop")
 				break
 			}
-			visited.add(triangle)
+			visited += triangle
 			val corner = point.isOutside(triangle.toTypedArray()) ?: return triangle
 			triangle = this.neighborOpposite(corner, triangle)
 		}
@@ -106,7 +106,7 @@ class DelaunayTriangle(triangle: Triangle) : ArraySet<Triangle>() {
 		// Locate containing triangle
 		val triangle = locate(site) ?: throw IllegalArgumentException("No containing triangle")
 		// Give up if no containing triangle or if site is already in DT
-		if (triangle.contains(site)) return
+		if (site in triangle) return
 
 		// Determine the cavity and update the triangulation
 		val cavity = getCavity(site, triangle)
