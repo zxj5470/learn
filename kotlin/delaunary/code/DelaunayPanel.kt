@@ -70,15 +70,15 @@ class DelaunayPanel(private val parent: DelaunayMain) : JPanel() {
 		all.filter {
 			!it.any { it.y == initCoordD || it.y == -initCoordD }
 		}.forEach {
-			val center = it.getCircumCenter()
-			val radius = center.subtract(it[0]).distanceEuclidean()
+			val center = it.getCircumscribedCenter()
+			val radius = (center - it[0]).distanceEuclidean()
 			drawCircle(center, radius)
 		}
 		g.stroke = stroke
 		g.color = color
 	}
 
-	private inline fun drawCircle(center: Pnt, radius: Double) {
+	private fun drawCircle(center: Pnt, radius: Double) {
 		val x = center.x.toInt()
 		val y = center.y.toInt()
 		val r = radius.toInt()

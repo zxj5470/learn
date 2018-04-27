@@ -1,15 +1,19 @@
 # Delaunay 三角网
 
 ## 相关说明
+
 运行效果
 ![](image/gif01.gif)
 
 效果图
 ![](image/pic01.png)
 ## 运行环境
-- Java 1.6 及以上 (实际测试过的环境 Java 1.6, 1.7, 1.8, 10)
+
+- Java 1.6 及以上 (已测试过的运行环境包括 Java 1.6, 1.7, 1.8, 10)
 - kotlin-stdlib.jar 
 
+命令
+双击 `run.bat` 打开即可。
 ```bash
 java -jar delaunay.jar
 ```
@@ -23,10 +27,25 @@ java -jar delaunay.jar
 - Graph
 
 
-## 使用语言 Kotlin
+## Kotlin
 
 ### 语言特性
 
-- 运算符重载（用于下标等）
+- 运算符重载(用于各种计算等)
 - 函数扩展(方便调用)
-- 高阶函数(map,filter,forEach)，减少使用for循环的情况。
+- 高阶函数(可迭代/集合类型的map,filter,forEach)。简化代码过程。
+
+## 中英对照表
+
+| 英文 | 中文 | 备注 |
+|:---|:---:|:---|
+|	bisector	|	平分 	|		|
+|	circumscribedCenter	|	外接圆圆心	|		|
+|	cross	|	叉乘	|		|
+|	determinant	|	行列式	|	计算行列式的值	|
+|	dimension	|	维数 	| 向量的size或行列式的长宽 |
+|	distanceEuclidean	|	欧氏距离		|   我们习惯的距离公式 |
+|	minus	|	减法	|	`Pnt`之间的 `-`	|
+|	perpendicular bisector	|	垂直平分线	|		|
+|	plus	|	加法	|	`Pnt`之间的 `+`	|
+|	relation	|	是	|		|

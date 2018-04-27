@@ -2,8 +2,8 @@ import java.util.Arrays
 
 class Triangle(collection: Collection<Pnt>) : ArraySet<Pnt>(collection) {
 
-	private val idNumber: Int                   // The id number
-	private var circumCenter: Pnt? = null        // The triangle's circumCenter
+	private val idNumber: Int
+	private var circumCenter: Pnt? = null
 
 	constructor(vararg vertices: Pnt) : this(Arrays.asList<Pnt>(*vertices))
 
@@ -24,10 +24,10 @@ class Triangle(collection: Collection<Pnt>) : ArraySet<Pnt>(collection) {
 	 * @return true iff this Triangle is a neighbor of triangle
 	 */
 	fun isNeighbor(triangle: Triangle): Boolean {
-		var count = 0
-		for (vertex in this)
-			if (!triangle.contains(vertex)) count++
-		return count == 1
+		val result = this.count {
+			it !in triangle
+		}
+		return result == 1
 	}
 
 	/**
@@ -44,10 +44,10 @@ class Triangle(collection: Collection<Pnt>) : ArraySet<Pnt>(collection) {
 	}
 
 	/**
-	 * @return the triangle's circumCenter
+	 * @return the triangle's circumscribedCenter
 	 */
-	fun getCircumCenter(): Pnt {
-		return circumCenter?: Pnt.circumcenter(this.toTypedArray())
+	fun getCircumscribedCenter(): Pnt {
+		return circumCenter ?: Pnt.circumscribedCenter(this.toTypedArray())
 	}
 
 

@@ -1,22 +1,10 @@
-/**
- *
- * @property coordinates DoubleArray
- * @property x Double
- * @property y Double
- * @constructor
- */
+import java.util.*
+
 class Pnt(vararg coords: Double) {
 
-	private val coordinates: DoubleArray = DoubleArray(coords.size)
+	val coordinates: DoubleArray = coords
 
-	init {
-		/**
-		 * from coords to `coordinates`
-		 */
-		System.arraycopy(coords, 0, coordinates, 0, coords.size)
-	}
-
-	constructor(vararg coordsInt: Int) : this(coords = *coordsInt.map(Int::toDouble).toDoubleArray())
+	constructor(vararg coords: Number) : this(coords = *coords.map(Number::toDouble).toDoubleArray())
 
 	override fun toString(): String {
 		if (coordinates.isEmpty()) return "Pnt()"
@@ -42,18 +30,11 @@ class Pnt(vararg coords: Double) {
 		return hash
 	}
 
-	/**
-	 * @return the specified coordinate of this Pnt
-	 * @throws ArrayIndexOutOfBoundsException for bad coordinate
-	 */
 	operator fun get(i: Int): Double = this.coordinates[i]
-
 	/**
-	 * @return this Pnt's dimension.
+	 * @return Int: this Pnt's dimension.
 	 */
-	fun dimension(): Int {
-		return coordinates.size
-	}
+	fun dimension() = coordinates.size
 
 	/**
 	 * Check that dimensions match.
@@ -61,7 +42,7 @@ class Pnt(vararg coords: Double) {
 	 * @return the dimension of the Pnts
 	 * @throws IllegalArgumentException if dimension fail to match
 	 */
-	fun dimCheck(p: Pnt): Int {
+	private fun dimCheck(p: Pnt): Int {
 		val len = this.coordinates.size
 		if (len != p.coordinates.size)
 			throw IllegalArgumentException("Dimension mismatch")
@@ -74,9 +55,8 @@ class Pnt(vararg coords: Double) {
 	 * @return a new Pnt with the additional coordinates
 	 */
 	fun extend(vararg coords: Double): Pnt {
-		val result = DoubleArray(coordinates.size + coords.size)
-		System.arraycopy(coordinates, 0, result, 0, coordinates.size)
-		System.arraycopy(coords, 0, result, coordinates.size, coords.size)
+		// operator fun DoubleArray.plus
+		val result = coordinates + coords
 		return Pnt(*result)
 	}
 
@@ -85,16 +65,16 @@ class Pnt(vararg coords: Double) {
 	 * @param p the other Pnt
 	 * @return dot product of this Pnt and p
 	 */
-	private fun dot(p: Pnt): Double {
+	private operator fun times(p: Pnt): Double {
 		val len = dimCheck(p)
-		return (0 until len).sumByDouble { coordinates[it] * p.coordinates[it] }
+		return (0 until len).sumByDouble { i -> coordinates[i] * p.coordinates[i] }
 	}
 
 	/**
 	 * @return the Euclidean length of this vector
 	 */
 	fun distanceEuclidean(): Double {
-		return Math.sqrt(this.dot(this))
+		return Math.sqrt(this * this)
 	}
 
 	/**
@@ -102,7 +82,7 @@ class Pnt(vararg coords: Double) {
 	 * @param p the other Pnt
 	 * @return a new Pnt = this - p
 	 */
-	fun subtract(p: Pnt): Pnt {
+	operator fun minus(p: Pnt): Pnt {
 		dimCheck(p)
 		return coordinates.mapIndexed { index, d ->
 			d - p.coordinates[index]
@@ -114,7 +94,7 @@ class Pnt(vararg coords: Double) {
 	 * @param p the other Pnt
 	 * @return a new Pnt = this + p
 	 */
-	private fun add(p: Pnt): Pnt {
+	private operator fun plus(p: Pnt): Pnt {
 		val len = dimCheck(p)
 		return (0 until len).map {
 			this.coordinates[it] + p.coordinates[it]
@@ -127,7 +107,7 @@ class Pnt(vararg coords: Double) {
 	 * @return the angle (in radians) between the two Pnts
 	 */
 	fun angle(p: Pnt): Double {
-		return Math.acos(this.dot(p) / (this.distanceEuclidean() * p.distanceEuclidean()))
+		return Math.acos(this * (p) / (this.distanceEuclidean() * p.distanceEuclidean()))
 	}
 
 	/**
@@ -140,9 +120,9 @@ class Pnt(vararg coords: Double) {
 	 */
 	fun bisector(point: Pnt): Pnt {
 		dimCheck(point)
-		val diff = this.subtract(point)
-		val sum = this.add(point)
-		val dot = diff.dot(sum)
+		val diff = this - point
+		val sum = this + point
+		val dot = diff * (sum)
 		return diff.extend(-dot / 2)
 	}
 
@@ -152,64 +132,59 @@ class Pnt(vararg coords: Double) {
 	 * indicating the relation between the vertex, the vertex's opposite facet,
 	 * and this Pnt.
 	 *
-	 * <pre>
 	 * -1 means Pnt is on same side of facet
 	 * 0 means Pnt is on the facet
 	 * +1 means Pnt is on opposite side of facet
-	</pre> *
 	 *
 	 * @param simplex an array of Pnts representing a simplex
 	 * @return an array of signs showing relation between this Pnt and simplex
 	 * @throws IllegalArgumentException if the simplex is degenerate
 	 */
 	private fun relation(simplex: Array<Pnt>): IntArray {
-		/* In 2D, we compute the cross of this matrix:
-         *    1   1   1   1
-         *    p0  a0  b0  c0
-         *    getP1  a1  b1  c1
-         * where (a, b, c) is the simplex and p is this Pnt. The result is a
-         * vector in which the first coordinate is the signed area (all signed
-         * areas are off by the same constant factor) of the simplex and the
-         * remaining coordinates are the *negated* signed areas for the
-         * simplices in which p is substituted for each of the vertices.
-         * Analogous results occur in higher dimensions.
-         */
+		/**
+		 * In 2D, we compute the cross of this matrix:
+		 *    1   1   1   1
+		 *    p0  a0  b0  c0
+		 *    getP1  a1  b1  c1
+		 * where (a, b, c) is the simplex and p is this Pnt. The result is a
+		 * vector in which the first coordinate is the signed area (all signed
+		 * areas are off by the same constant factor) of the simplex and the
+		 * remaining coordinates are the *negated* signed areas for the
+		 * simplices in which p is substituted for each of the vertices.
+		 * Analogous results occur in higher dimensions.
+		 */
 		val dim = simplex.size - 1
 		if (this.dimension() != dim)
 			throw IllegalArgumentException("Dimension mismatch")
 
-		/* Create and load the matrix */
-		val matrix = arrayOfNulls<Pnt>(dim + 1)
-		/* First row */
-		val coords = DoubleArray(simplex.size + 1) { 1.0 }
-		matrix[0] = Pnt(*coords)
 		/* Other rows */
-		(0 until dim).forEach { i ->
+		val matrix = (0 until dim).mapTo(LinkedList()) { i ->
 			// [0,dim-1]
-			coords[0] = this.coordinates[i]
-			simplex.forEachIndexed { j, it ->
-				coords[j + 1] = it.coordinates[i]
-			}
-			matrix[i + 1] = Pnt(*coords)
-		}
+			val coords = simplex.mapTo(LinkedList()) { it.coordinates[i] }
+			coords.addFirst(this.coordinates[i])
+			coords.toDoubleArray().toPnt()
+		}.apply {
+			val coords = DoubleArray(simplex.size + 1) { 1.0 }.toPnt()
+			addFirst(coords)
+		}.toTypedArray()
 
 		/* Compute and analyze the vector of areas/volumes/contents */
-		val vector = cross(matrix as Array<Pnt>)
+		val vector = cross(matrix)
 		val content = vector.coordinates[0]
 		val result = IntArray(dim + 1)
 		for (i in result.indices) {
 			val value = vector.coordinates[i + 1]
-			if (Math.abs(value) <= 1.0e-6 * Math.abs(content))
-				result[i] = 0
-			else if (value < 0)
-				result[i] = -1
-			else
-				result[i] = 1
+			result[i] = when {
+				Math.abs(value) <= 1.0e-6 * Math.abs(content)
+				-> 0
+				value < 0 -> -1
+				else -> 1
+			}
 		}
-		when {
-			content < 0 -> return result.map { -it }.toIntArray()
-			content == 0.0 -> return result.map(Math::abs).toIntArray()
-			else -> return result
+		return when {
+			content < 0 -> result.map { -it }.toIntArray()
+			content == 0.0 -> result.map(Math::abs).toIntArray()
+			else -> result
 		}
 	}
 
@@ -242,9 +217,9 @@ class Pnt(vararg coords: Double) {
 	 */
 	fun vsCircumcircle(simplex: Array<Pnt>): Int {
 		val matrix = simplex.mapTo(ArrayList()) {
-			it.extend(1.0, it.dot(it))
+			it.extend(1.0, it * (it))
 		}
-		matrix.add(this.extend(1.0, this.dot(this)))
+		matrix.add(this.extend(1.0, this * (this)))
 		val result = determinant(matrix.toTypedArray()).let { d ->
 			when {
 				d > 0 -> 1
@@ -256,18 +231,7 @@ class Pnt(vararg coords: Double) {
 	}
 
 	companion object {
-		/**
-		 * Create a String for a matrix.
-		 * @param matrix the matrix (an array of Pnts)
-		 * @return a String representation of the matrix
-		 */
-		private fun str(matrix: Array<Pnt>): String {
-			return buildString {
-				append("{ ")
-				matrix.joinToString(" ") { "$it" }.let(::append)
-				append(" }")
-			}
-		}
+
 
 		/**
 		 * Compute the determinant of a matrix (array of Pnts).
@@ -281,13 +245,11 @@ class Pnt(vararg coords: Double) {
 			if (matrix.size != matrix[0].dimension())
 				throw IllegalArgumentException("Matrix is not square")
 			val columns = BooleanArray(matrix.size) { true }
-
 			try {
 				return determinant(matrix, 0, columns)
 			} catch (e: ArrayIndexOutOfBoundsException) {
 				throw IllegalArgumentException("Matrix is wrong shape")
 			}
-
 		}
 
 		/**
@@ -306,7 +268,7 @@ class Pnt(vararg coords: Double) {
 			for (col in columns.indices) {
 				if (!columns[col]) continue
 				columns[col] = false
-				sum += sign.toDouble() * matrix[row].coordinates[col] *
+				sum += sign * matrix.get(row, col) *
 						determinant(matrix, row + 1, columns)
 				columns[col] = true
 				sign = -sign
@@ -327,8 +289,7 @@ class Pnt(vararg coords: Double) {
 			val len = matrix.size + 1
 			if (len != matrix[0].dimension())
 				throw IllegalArgumentException("Dimension mismatch")
-			val columns = BooleanArray(len)
-			for (i in 0 until len) columns[i] = true
+			val columns = BooleanArray(len) { true }
 			val result = DoubleArray(len)
 			var sign = 1
 			try {
@@ -341,8 +302,7 @@ class Pnt(vararg coords: Double) {
 			} catch (e: ArrayIndexOutOfBoundsException) {
 				throw IllegalArgumentException("Matrix is wrong shape")
 			}
-
-			return Pnt(*result)
+			return result.toPnt()
 		}
 
 		/**
@@ -360,49 +320,22 @@ class Pnt(vararg coords: Double) {
 		/**
 		 * Circumcenter of a simplex.
 		 * @param simplex the simplex (as an array of Pnts)
-		 * @return the circumcenter (a Pnt) of simplex
+		 * @return the circumscribedCenter (a Pnt) of simplex
 		 */
-		fun circumcenter(simplex: Array<Pnt>): Pnt {
+		fun circumscribedCenter(simplex: Array<Pnt>): Pnt {
 			val dim = simplex[0].dimension()
 			if (simplex.size - 1 != dim)
 				throw IllegalArgumentException("Dimension mismatch")
+
 			val matrix = simplex.mapIndexedNotNull { i, v ->
-				if (i < simplex.lastIndex) v.bisector(simplex[i + 1])
+				if (i != simplex.lastIndex) v.bisector(simplex[i + 1])
 				else null
 			}.toTypedArray()
 			val hCenter = cross(matrix)      // Center in homogeneous coordinates
 			val last = hCenter.coordinates[dim]
 			val result = DoubleArray(dim)
 			for (i in 0 until dim) result[i] = hCenter.coordinates[i] / last
-			return Pnt(*result)
-		}
-
-		/**
-		 * Main program (used for testing).
-		 */
-		@JvmStatic
-		fun main(args: Array<String>) {
-			val p = Pnt(1, 2, 3)
-			println("Pnt created: $p")
-			val matrix1 = arrayOf(Pnt(1, 2), Pnt(3, 4))
-			val matrix2 = arrayOf(Pnt(7, 0, 5), Pnt(2, 4, 6), Pnt(3, 8, 1))
-			print("Results should be -2 and -288: ")
-			println("${determinant(matrix1)} ${determinant(matrix2)}")
-			val p1 = Pnt(1, 1)
-			val p2 = Pnt(-1, 1)
-			println("Angle between $p1 and $p2: ${p1.angle(p2)}")
-			println("$p1 subtract $p2: ${p1.subtract(p2)}")
-			val v0 = Pnt(0, 0)
-			val v1 = Pnt(1, 1)
-			val v2 = Pnt(2, 2)
-			val vs = arrayOf(v0, Pnt(0, 1), Pnt(1, 0))
-			val vp = Pnt(.1, .1)
-			println("$vp isInside ${str(vs)}: ${vp.isInside(vs)}")
-			println("$v1 isInside ${str(vs)}: ${v1.isInside(vs)}")
-			println("$vp vsCircumcircle ${str(vs)}: ${vp.vsCircumcircle(vs)}")
-			println("$v1 vsCircumcircle ${str(vs)}: ${v1.vsCircumcircle(vs)}")
-			println("$v2 vsCircumcircle ${str(vs)}: ${v2.vsCircumcircle(vs)}")
-			println("Circumcenter of ${str(vs)} is ${circumcenter(vs)}")
+			return result.toPnt()
 		}
 	}
 }

@@ -13,20 +13,25 @@ class DelaunayMain : javax.swing.JApplet(), Runnable, ActionListener, MouseListe
 	}
 
 	override fun run() {
-		layout = BorderLayout()
 
-		val buttonPanel = JPanel()
-		buttonPanel.add(clearButton)
-		buttonPanel.add(showCircleCheckBox)
-		this.add(buttonPanel, "North")
+		val buttonPanel = JPanel().apply {
+			add(clearButton)
+			add(showCircleCheckBox)
+		}
 
-		val statusPanel = JPanel()
-		statusPanel.add(coordText, "East")
-		this.add(statusPanel, "South")
+		val statusPanel = JPanel().apply {
+			layout = BorderLayout()
+			add(coordText, "East")
+		}
 
 		// Build the delaunay panel
 		delaunayPanel.background = DelaunayPanel.tianyiBlue
-		this.add(delaunayPanel, "Center")
+		this.apply{
+			layout = BorderLayout()
+			add(buttonPanel, "North")
+			add(delaunayPanel, "Center")
+			add(statusPanel, "South")
+		}
 
 		clearButton.addActionListener(this)
 		showCircleCheckBox.addActionListener(this)
@@ -67,7 +72,7 @@ class DelaunayMain : javax.swing.JApplet(), Runnable, ActionListener, MouseListe
 			useSystemUI()
 			val app = DelaunayMain()
 			app.init()
-			JFrame().apply{
+			JFrame().apply {
 				setSize(700, 500)
 				title = delaunayTitle
 				layout = BorderLayout()

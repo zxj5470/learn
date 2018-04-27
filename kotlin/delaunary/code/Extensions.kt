@@ -21,14 +21,19 @@ val Triangle.p3: Pnt
 
 fun useSystemUI() = UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
 
+fun DoubleArray.toPnt() = Pnt(*this)
+
 /**
  *
- * @receiver Iterable<T>
- * @param predicate Function1<T, Boolean>
- * @return T?
+ * @receiver Array<Pnt> matrix the matrix (an array of Pnts)
+ * @return String representation of the matrix
  */
-inline fun <T> Iterable<T>.anyThis(predicate: (T) -> Boolean): T? {
-	if (this is Collection && isEmpty()) return null
-	for (element in this) if (predicate(element)) return element
-	return null
+fun Array<Pnt>.str(): String {
+	return buildString {
+		append("{ ")
+		this@str.joinToString(" ") { "$it" }.let(::append)
+		append(" }")
+	}
 }
+
+fun Array<Pnt>.get(i:Int,j:Int) = this[i].coordinates[j]
