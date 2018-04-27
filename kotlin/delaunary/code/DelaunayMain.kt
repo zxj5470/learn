@@ -61,24 +61,20 @@ class DelaunayMain : javax.swing.JApplet(), Runnable, ActionListener, MouseListe
 	}
 
 	companion object {
-		private const val title = "三角网"
+		private const val delaunayTitle = "三角网"
 		@JvmStatic
 		fun main(args: Array<String>) {
-			try {
-				// set system default style
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
-			} catch (e: Exception) {
-				e.printStackTrace()
-			}
+			useSystemUI()
 			val app = DelaunayMain()
 			app.init()
-			val frame = JFrame()
-			frame.setSize(700, 500)
-			frame.title = title
-			frame.layout = BorderLayout()
-			frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-			frame.add(app, "Center")
-			frame.isVisible = true
+			JFrame().apply{
+				setSize(700, 500)
+				title = delaunayTitle
+				layout = BorderLayout()
+				defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+				add(app, "Center")
+				isVisible = true
+			}
 		}
 	}
 

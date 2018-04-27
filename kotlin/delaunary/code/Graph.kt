@@ -24,8 +24,8 @@ import java.util.HashMap
 class Graph<N> {
 
 	private val theNeighbors = HashMap<N, ArraySet<N>>()// Node -> adjacent nodes
-	val nodeSet = // Set view of all nodes
-			Collections.unmodifiableSet(theNeighbors.keys)
+	val nodeSet: MutableSet<N> = // Set view of all nodes
+			(theNeighbors.keys)
 
 	/**
 	 * Add a node.  If node is already in graph then no change.
@@ -44,8 +44,8 @@ class Graph<N> {
 	 */
 	@Throws(NullPointerException::class)
 	fun add(nodeA: N, nodeB: N) {
-		theNeighbors[nodeA]!!.add(nodeB)
-		theNeighbors[nodeB]!!.add(nodeA)
+		theNeighbors[nodeA]?.add(nodeB)
+		theNeighbors[nodeB]?.add(nodeA)
 	}
 
 	/**
@@ -64,8 +64,8 @@ class Graph<N> {
 
 	/**
 	 * Report all the neighbors of node.
-	 * @param node the node
-	 * @return the neighbors of node
+	 * @param node N the node
+	 * @return Set<N> the neighbors of node
 	 * @throws NullPointerException if node does not appear in graph
 	 */
 	@Throws(NullPointerException::class)

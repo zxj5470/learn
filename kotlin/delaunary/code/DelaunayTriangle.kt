@@ -9,14 +9,6 @@ import java.util.*
  *
  * A DelaunayTriangle is a Set of Triangles. A DelaunayTriangle is unmodifiable as a
  * Set; the only way to change it is to add sites (via delaunayPlace).
- *
- * @author Paul Chew
- *
- * Created July 2005. Derived from an earlier, messier version.
- *
- * Modified November 2007. Rewrote to use AbstractSet as parent class and to use
- * the Graph class internally. Tried to make the DT algorithm clearer by
- * explicitly creating a cavity.  Added code needed to find a Voronoi cell.
  */
 class DelaunayTriangle(triangle: Triangle) : ArraySet<Triangle>() {
 
@@ -43,16 +35,16 @@ class DelaunayTriangle(triangle: Triangle) : ArraySet<Triangle>() {
 
 	/**
 	 * Report neighbor opposite the given vertex of triangle.
-	 * @param site a vertex of triangle
+	 * @param point a vertex of triangle
 	 * @param triangle we want the neighbor of this triangle
-	 * @return the neighbor opposite site in triangle; null if none
-	 * @throws IllegalArgumentException if site is not in this triangle
+	 * @return the neighbor opposite point in triangle; null if none
+	 * @throws IllegalArgumentException if point is not in this triangle
 	 */
-	private fun neighborOpposite(site: Pnt, triangle: Triangle): Triangle? {
-		if (!triangle.contains(site))
+	private fun neighborOpposite(point: Pnt, triangle: Triangle): Triangle? {
+		if (!triangle.contains(point))
 			throw IllegalArgumentException("Bad vertex; not in triangle")
 		for (neighbor in triGraph.neighbors(triangle)) {
-			if (!neighbor.contains(site)) return neighbor
+			if (!neighbor.contains(point)) return neighbor
 		}
 		return null
 	}
@@ -79,19 +71,17 @@ class DelaunayTriangle(triangle: Triangle) : ArraySet<Triangle>() {
 		val visited = HashSet<Triangle>()
 		while (triangle != null) {
 			if (visited.contains(triangle)) { // This should never happen
-				println("Warning: Caught in a locate loop")
+				println("Caught in a locate loop")
 				break
 			}
 			visited += triangle
 			val corner = point.isOutside(triangle.toTypedArray()) ?: return triangle
 			triangle = this.neighborOpposite(corner, triangle)
 		}
-		println("Warning: Checking all triangles for $point")
-		for (tri in this) {
-			if (point.isOutside(tri.toTypedArray()) == null) return tri
+		// if find a triangle is outside, then return it
+		return this.firstOrNull {
+			point.isOutside(it.toTypedArray()) == null
 		}
-		println("Warning: No triangle holds $point")
-		return null
 	}
 
 	/**

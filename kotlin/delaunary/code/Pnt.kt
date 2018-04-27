@@ -1,5 +1,3 @@
-
-
 /**
  *
  * @property coordinates DoubleArray
@@ -183,14 +181,15 @@ class Pnt(vararg coords: Double) {
 		/* Create and load the matrix */
 		val matrix = arrayOfNulls<Pnt>(dim + 1)
 		/* First row */
-		val coords = DoubleArray(dim + 2)
-		for (j in coords.indices) coords[j] = 1.0
+		val coords = DoubleArray(simplex.size + 1) { 1.0 }
 		matrix[0] = Pnt(*coords)
 		/* Other rows */
-		for (i in 0 until dim) {// [0,dim-1]
+		(0 until dim).forEach { i ->
+			// [0,dim-1]
 			coords[0] = this.coordinates[i]
-			for (j in simplex.indices)
-				coords[j + 1] = simplex[j].coordinates[i]
+			simplex.forEachIndexed { j, it ->
+				coords[j + 1] = it.coordinates[i]
+			}
 			matrix[i + 1] = Pnt(*coords)
 		}
 
@@ -207,15 +206,11 @@ class Pnt(vararg coords: Double) {
 			else
 				result[i] = 1
 		}
-		if (content < 0) {
-			for (i in result.indices)
-				result[i] = -result[i]
+		when {
+			content < 0 -> return result.map { -it }.toIntArray()
+			content == 0.0 -> return result.map(Math::abs).toIntArray()
+			else -> return result
 		}
-		if (content == 0.0) {
-			for (i in result.indices)
-				result[i] = Math.abs(result[i])
-		}
-		return result
 	}
 
 	/**
@@ -225,10 +220,8 @@ class Pnt(vararg coords: Double) {
 	 */
 	fun isOutside(simplex: Array<Pnt>): Pnt? {
 		val result = this.relation(simplex)
-		for (i in result.indices) {
-			if (result[i] > 0) return simplex[i]
-		}
-		return null
+		val index = result.find { it > 0 } ?: return null
+		return simplex[index]
 	}
 
 	/**
@@ -248,26 +241,27 @@ class Pnt(vararg coords: Double) {
 	 * @return -1, 0, or +1 for inside, on, or outside of circumcircle
 	 */
 	fun vsCircumcircle(simplex: Array<Pnt>): Int {
-		val matrix = arrayOfNulls<Pnt>(simplex.size + 1)
-		for (i in simplex.indices)
-			matrix[i] = simplex[i].extend(1.0, simplex[i].dot(simplex[i]))
-		matrix[simplex.size] = this.extend(1.0, this.dot(this))
-		val d = determinant(matrix as Array<Pnt>)
-		var result = if (d < 0) -1 else if (d > 0) +1 else 0
-		if (content(simplex) < 0) result = -result
-		return result
+		val matrix = simplex.mapTo(ArrayList()) {
+			it.extend(1.0, it.dot(it))
+		}
+		matrix.add(this.extend(1.0, this.dot(this)))
+		val result = determinant(matrix.toTypedArray()).let { d ->
+			when {
+				d > 0 -> 1
+				d < 0 -> -1
+				else -> 0
+			}
+		}
+		return if (content(simplex) < 0) -result else result
 	}
 
 	companion object {
-
-		/* Pnts as matrices */
-
 		/**
 		 * Create a String for a matrix.
 		 * @param matrix the matrix (an array of Pnts)
-		 * @return a String represenation of the matrix
+		 * @return a String representation of the matrix
 		 */
-		private fun toString(matrix: Array<Pnt>): String {
+		private fun str(matrix: Array<Pnt>): String {
 			return buildString {
 				append("{ ")
 				matrix.joinToString(" ") { "$it" }.let(::append)
@@ -286,8 +280,8 @@ class Pnt(vararg coords: Double) {
 		fun determinant(matrix: Array<Pnt>): Double {
 			if (matrix.size != matrix[0].dimension())
 				throw IllegalArgumentException("Matrix is not square")
-			val columns = BooleanArray(matrix.size)
-			for (i in matrix.indices) columns[i] = true
+			val columns = BooleanArray(matrix.size) { true }
+
 			try {
 				return determinant(matrix, 0, columns)
 			} catch (e: ArrayIndexOutOfBoundsException) {
@@ -396,20 +390,19 @@ class Pnt(vararg coords: Double) {
 			println("${determinant(matrix1)} ${determinant(matrix2)}")
 			val p1 = Pnt(1, 1)
 			val p2 = Pnt(-1, 1)
-			println("Angle between " + p1 + " and " +
-					p2 + ": " + p1.angle(p2))
+			println("Angle between $p1 and $p2: ${p1.angle(p2)}")
 			println("$p1 subtract $p2: ${p1.subtract(p2)}")
 			val v0 = Pnt(0, 0)
 			val v1 = Pnt(1, 1)
 			val v2 = Pnt(2, 2)
 			val vs = arrayOf(v0, Pnt(0, 1), Pnt(1, 0))
 			val vp = Pnt(.1, .1)
-			println("$vp isInside ${toString(vs)}: ${vp.isInside(vs)}")
-			println("$v1 isInside ${toString(vs)}: ${v1.isInside(vs)}")
-			println("$vp vsCircumcircle ${toString(vs)}: ${vp.vsCircumcircle(vs)}")
-			println("$v1 vsCircumcircle ${toString(vs)}: ${v1.vsCircumcircle(vs)}")
-			println("$v2 vsCircumcircle ${toString(vs)}: ${v2.vsCircumcircle(vs)}")
-			println("Circumcenter of ${toString(vs)} is ${circumcenter(vs)}")
+			println("$vp isInside ${str(vs)}: ${vp.isInside(vs)}")
+			println("$v1 isInside ${str(vs)}: ${v1.isInside(vs)}")
+			println("$vp vsCircumcircle ${str(vs)}: ${vp.vsCircumcircle(vs)}")
+			println("$v1 vsCircumcircle ${str(vs)}: ${v1.vsCircumcircle(vs)}")
+			println("$v2 vsCircumcircle ${str(vs)}: ${v2.vsCircumcircle(vs)}")
+			println("Circumcenter of ${str(vs)} is ${circumcenter(vs)}")
 		}
 	}
 }
