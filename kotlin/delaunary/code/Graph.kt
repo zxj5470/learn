@@ -1,23 +1,3 @@
-/*
- * Copyright (c) 2007 by L. Paul Chew.
- *
- * Permission is hereby granted, without written agreement and without
- * license or royalty fees, to use, copy, modify, and distribute this
- * software and its documentation for any purpose, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
- */
-
 import java.util.Collections
 import java.util.HashMap
 
@@ -54,12 +34,12 @@ class Graph<N> {
 	 * @param node the node to remove.
 	 */
 	fun remove(node: N) {
-		if (!theNeighbors.containsKey(node)) return
-		theNeighbors[node]?.forEach {
+		val theNode = theNeighbors[node] ?: return
+		theNode.forEach {
 			theNeighbors[it]?.remove(node)
 		}
-		theNeighbors[node]!!.clear()                 // Remove "from" links
-		theNeighbors.remove(node)                      // Remove the node
+		theNode.clear()
+		theNeighbors.remove(node)
 	}
 
 	/**

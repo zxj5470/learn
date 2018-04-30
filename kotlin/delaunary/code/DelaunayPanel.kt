@@ -124,5 +124,4 @@ class DelaunayPanel(private val parent: DelaunayMain) : JPanel() {
 		private const val initCoordD = 0xcafe.toDouble()
 		var pointRadius = 3
 	}
-
 }

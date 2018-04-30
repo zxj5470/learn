@@ -33,13 +33,8 @@ open class ArraySet<E> : AbstractSet<E> {
 		return items[index]
 	}
 
-	/**
-	 * True iff any member of the collection is also in the ArraySet.
-	 * @param collection the Collection to check
-	 * @return true iff any member of collection appears in this ArraySet
-	 */
-	fun containsAny(collection: Collection<*>): Boolean {
-		return collection.any { this.contains(it) }
+	override operator fun contains(element: E):Boolean{
+		return items.contains(element)
 	}
 
 	override fun add(element: E): Boolean {

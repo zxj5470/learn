@@ -43,8 +43,9 @@ class DelaunayTriangle(triangle: Triangle) : ArraySet<Triangle>() {
 	private fun neighborOpposite(point: Pnt, triangle: Triangle): Triangle? {
 		if (!triangle.contains(point))
 			throw IllegalArgumentException("Bad vertex; not in triangle")
-		for (neighbor in triGraph.neighbors(triangle)) {
-			if (!neighbor.contains(point)) return neighbor
+
+		triGraph.neighbors(triangle).forEach{
+			if(point !in it) return it
 		}
 		return null
 	}
@@ -54,7 +55,7 @@ class DelaunayTriangle(triangle: Triangle) : ArraySet<Triangle>() {
 	 * @param triangle the triangle to check
 	 * @return the neighbors of triangle
 	 */
-	fun neighbors(triangle: Triangle): Set<Triangle> {
+	private fun neighbors(triangle: Triangle): Set<Triangle> {
 		return triGraph.neighbors(triangle)
 	}
 
@@ -112,10 +113,8 @@ class DelaunayTriangle(triangle: Triangle) : ArraySet<Triangle>() {
 	private fun getCavity(site: Pnt, triangle: Triangle): Set<Triangle> {
 		var tri = triangle
 		val encroached = HashSet<Triangle>()
-		val toBeChecked = LinkedList<Triangle>()
-		val marked = HashSet<Triangle>()
-		toBeChecked.add(tri)
-		marked.add(tri)
+		val toBeChecked = LinkedList<Triangle>().apply { add(tri) }
+		val marked = HashSet<Triangle>().apply { add(tri) }
 		while (!toBeChecked.isEmpty()) {
 			tri = toBeChecked.remove()
 			if (site.vsCircumcircle(tri.toTypedArray()) == 1)
@@ -157,7 +156,9 @@ class DelaunayTriangle(triangle: Triangle) : ArraySet<Triangle>() {
 		theTriangles.removeAll(cavity)        // Adj triangles only
 
 		// Remove the cavity triangles from the triangulation
-		for (triangle in cavity) triGraph.remove(triangle)
+		cavity.forEach {
+			triGraph.remove(it)
+		}
 
 		// Build each new triangle and add it to the triangulation
 		val newTriangles = HashSet<Triangle>()
