@@ -23,6 +23,8 @@ RoadToMachineLearning/
 .vs/
 Debug/
 Release/
+*.ilk
+*.pdb
 
 # folder
 c/

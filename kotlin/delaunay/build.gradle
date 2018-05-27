@@ -1,0 +1,48 @@
+buildscript {
+	ext.kotlin_version = '1.2.31'
+
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+	}
+}
+
+group 'delaunay'
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+sourceCompatibility = jvm_target
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+	testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+compileKotlin {
+	kotlinOptions.jvmTarget = jvm_target
+}
+compileTestKotlin {
+	kotlinOptions.jvmTarget = jvm_target
+}
+
+sourceSets {
+	main {
+		java.srcDir 'code'
+	}
+}
+
+jar {
+	manifest {
+		attributes "Main-Class": "DelaunayMain"
+	}
+	from {
+		configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+}

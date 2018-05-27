@@ -33,6 +33,12 @@ open class ArraySet<E> : AbstractSet<E> {
 		return items[index]
 	}
 
+	/**
+	 * `in`
+	 * @usage `if(a in b){xxxxx}`
+	 * @param element E
+	 * @return Boolean
+	 */
 	override operator fun contains(element: E):Boolean{
 		return items.contains(element)
 	}

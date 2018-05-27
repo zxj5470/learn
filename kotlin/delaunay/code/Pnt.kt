@@ -175,8 +175,7 @@ class Pnt(vararg coords: Double) {
 		for (i in result.indices) {
 			val value = vector.coordinates[i + 1]
 			result[i] = when {
-				Math.abs(value) <= 1.0e-6 * Math.abs(content)
-				-> 0
+				Math.abs(value) <= 1.0e-6 * Math.abs(content) -> 0
 				value < 0 -> -1
 				else -> 1
 			}
@@ -259,7 +258,6 @@ class Pnt(vararg coords: Double) {
 		 * @param row the starting row
 		 * @param columns a boolean array indicating the "active" columns
 		 * @return the determinant of the specified submatrix
-		 * @throws ArrayIndexOutOfBoundsException if dimensions are wrong
 		 */
 		private fun determinant(matrix: Array<Pnt>, row: Int, columns: BooleanArray): Double {
 			if (row == matrix.size) return 1.0

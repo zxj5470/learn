@@ -4,19 +4,15 @@
 
 运行效果
 ![](image/gif01.gif)
+（动态图位于 image文件夹下 gif01.gif）
 
 效果图
 ![](image/pic01.png)
 ## 运行环境
+- Java 1.6 及以上 (已测试过的运行环境: Java 1.6, 1.7, 1.8, 10)
 
-- Java 1.6 及以上 (已测试过的运行环境包括 Java 1.6, 1.7, 1.8, 10)
-- kotlin-stdlib.jar 
-
-命令
-双击 `run.bat` 打开即可。
-```bash
-java -jar delaunay.jar
-```
+**命令**
+Windows 下双击 `run.bat` 打开即可。
 
 ## 数据结构
 
@@ -27,13 +23,11 @@ java -jar delaunay.jar
 - Graph
 
 
-## Kotlin
-
-### 语言特性
-
-- 运算符重载(用于各种计算等)
-- 函数扩展(方便调用)
-- 高阶函数(可迭代/集合类型的map,filter,forEach)。简化代码过程。
+## 使用到的 Kotlin 语言特性
+- 与Java互操作性强。面向对象但又可以函数式编程。
+- 运算符重载(用于各种计算等，C++ 只能对自定义的class进行重载)
+- 函数扩展(方便调用。本质上和C#的扩展方法相同，但书写更为方便，无需在代码中创建类)
+- 集合类型高阶函数(可迭代/集合类型的 `map`, `filter`, `forEach`方法)。简化代码过程。
 
 ## 中英对照表
 
@@ -41,6 +35,7 @@ java -jar delaunay.jar
 |:---|:---:|:---|
 |	bisector	|	平分 	|		|
 |	circumscribedCenter	|	外接圆圆心	|		|
+|	content	|	s	|		|
 |	cross	|	叉乘	|		|
 |	determinant	|	行列式	|	计算行列式的值	|
 |	dimension	|	维数 	| 向量的size或行列式的长宽 |
